@@ -17,6 +17,9 @@ import {
   Pie,
   Cell
 } from "recharts";
+import NotificationPopover from "@/components/shared/NotificationPopover";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 // Mock data - in a real app, this would come from a database
 const mockData = {
@@ -43,13 +46,13 @@ const borrowingData = [
 
 // Pie chart data
 const bookStatusData = [
-  { name: 'Available', value: mockData.availableBooks, color: '#3b82f6' },
+  { name: 'Available', value: mockData.availableBooks, color: '#8b5cf6' },
   { name: 'Borrowed', value: mockData.borrowedBooks, color: '#10b981' },
   { name: 'Overdue', value: mockData.overdueBooks, color: '#ef4444' },
 ];
 
 const equipmentStatusData = [
-  { name: 'Available', value: mockData.availableEquipment, color: '#8b5cf6' },
+  { name: 'Available', value: mockData.availableEquipment, color: '#9333ea' },
   { name: 'Borrowed', value: mockData.borrowedEquipment, color: '#14b8a6' },
   { name: 'Overdue', value: mockData.overdueEquipment, color: '#f97316' },
 ];
@@ -68,52 +71,66 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-purple-800">Dashboard</h1>
+        <div className="flex gap-4">
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={18} />
+            <Input 
+              placeholder="Search..." 
+              className="pl-10 border-purple-200 focus-visible:ring-purple-400"
+            />
+          </div>
+          <NotificationPopover />
+        </div>
+      </div>
+      
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <DashboardCard
             title="Total Books"
             count={mockData.totalBooks}
-            icon={<BookOpen size={24} />}
+            icon={<BookOpen size={20} />}
             linkTo="/books"
-            bgColor="bg-gradient-to-br from-blue-500 to-blue-600"
+            bgColor="bg-gradient-to-br from-purple-500 to-purple-600"
             textColor="text-white"
           />
           
           <DashboardCard
             title="Total Equipment"
             count={mockData.totalEquipment}
-            icon={<Database size={24} />}
+            icon={<Database size={20} />}
             linkTo="/equipment"
-            bgColor="bg-gradient-to-br from-purple-500 to-purple-600"
+            bgColor="bg-gradient-to-br from-indigo-500 to-indigo-600"
             textColor="text-white"
           />
           
           <DashboardCard
             title="Registered Users"
             count={mockData.totalUsers}
-            icon={<Users size={24} />}
+            icon={<Users size={20} />}
             linkTo="/users"
-            bgColor="bg-gradient-to-br from-emerald-500 to-emerald-600"
+            bgColor="bg-gradient-to-br from-violet-500 to-violet-600"
             textColor="text-white"
           />
         </div>
 
         <section>
-          <h3 className="text-xl font-semibold mb-4 text-blue-800">Books Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h3 className="text-lg font-semibold mb-3 text-purple-800">Books Summary</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <DashboardCard
               title="Available Books"
               count={mockData.availableBooks}
-              icon={<Book size={24} />}
+              icon={<Book size={20} />}
               linkTo="/reports/available-books"
-              bgColor="bg-gradient-to-br from-indigo-500 to-indigo-600"
+              bgColor="bg-gradient-to-br from-purple-400 to-purple-500"
               textColor="text-white"
             />
             
             <DashboardCard
               title="Borrowed Books"
               count={mockData.borrowedBooks}
-              icon={<Check size={24} />}
+              icon={<Check size={20} />}
               linkTo="/reports/borrowed-books"
               bgColor="bg-gradient-to-br from-green-500 to-green-600"
               textColor="text-white"
@@ -122,7 +139,7 @@ const Index = () => {
             <DashboardCard
               title="Overdue Books"
               count={mockData.overdueBooks}
-              icon={<AlertTriangle size={24} />}
+              icon={<AlertTriangle size={20} />}
               linkTo="/reports/overdue-books"
               bgColor="bg-gradient-to-br from-red-500 to-red-600"
               textColor="text-white"
@@ -131,21 +148,21 @@ const Index = () => {
         </section>
         
         <section>
-          <h3 className="text-xl font-semibold mb-4 text-purple-800">Equipment Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h3 className="text-lg font-semibold mb-3 text-purple-800">Equipment Summary</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <DashboardCard
               title="Available Equipment"
               count={mockData.availableEquipment}
-              icon={<Database size={24} />}
+              icon={<Database size={20} />}
               linkTo="/reports/available-equipment"
-              bgColor="bg-gradient-to-br from-violet-500 to-violet-600"
+              bgColor="bg-gradient-to-br from-violet-400 to-violet-500"
               textColor="text-white"
             />
             
             <DashboardCard
               title="Borrowed Equipment"
               count={mockData.borrowedEquipment}
-              icon={<Check size={24} />}
+              icon={<Check size={20} />}
               linkTo="/reports/borrowed-equipment"
               bgColor="bg-gradient-to-br from-teal-500 to-teal-600"
               textColor="text-white"
@@ -154,7 +171,7 @@ const Index = () => {
             <DashboardCard
               title="Overdue Equipment"
               count={mockData.overdueEquipment}
-              icon={<AlertTriangle size={24} />}
+              icon={<AlertTriangle size={20} />}
               linkTo="/reports/overdue-equipment"
               bgColor="bg-gradient-to-br from-orange-500 to-orange-600"
               textColor="text-white"
@@ -163,27 +180,34 @@ const Index = () => {
         </section>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white shadow-md border">
-            <CardHeader>
-              <CardTitle className="text-blue-700 flex items-center gap-2">
-                <BarChart size={20} />
+          <Card className="bg-white shadow-md border border-purple-100">
+            <CardHeader className="border-b border-purple-50 pb-3">
+              <CardTitle className="text-purple-700 flex items-center gap-2 text-lg">
+                <BarChart size={18} />
                 Monthly Borrowing Trend
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="h-80">
+            <CardContent className="p-4">
+              <div className="h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RechartsBarChart
                     data={borrowingData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 10, right: 20, left: 5, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="month" />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff',
+                        borderColor: '#ddd',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }} 
+                    />
                     <Legend />
-                    <Bar dataKey="books" name="Books" fill="#3b82f6" />
-                    <Bar dataKey="equipment" name="Equipment" fill="#8b5cf6" />
+                    <Bar dataKey="books" name="Books" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="equipment" name="Equipment" fill="#6366f1" radius={[4, 4, 0, 0]} />
                   </RechartsBarChart>
                 </ResponsiveContainer>
               </div>
@@ -191,94 +215,108 @@ const Index = () => {
           </Card>
 
           <div className="grid grid-cols-1 gap-6">
-            <Card className="bg-white shadow-md border">
-              <CardHeader>
-                <CardTitle className="text-blue-700">Book Status Distribution</CardTitle>
+            <Card className="bg-white shadow-md border border-purple-100">
+              <CardHeader className="border-b border-purple-50 pb-3">
+                <CardTitle className="text-purple-700 text-lg">Status Distribution</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="h-[160px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={bookStatusData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={60}
-                        fill="#8884d8"
-                        dataKey="value"
-                        nameKey="name"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      >
-                        {bookStatusData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex justify-center gap-4 mt-2">
-                  {bookStatusData.map((item, index) => (
-                    <div key={index} className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-xs">{item.name}</span>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-center text-sm font-medium mb-1">Books</h4>
+                    <div className="h-[140px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={bookStatusData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={50}
+                            fill="#8884d8"
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {bookStatusData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            formatter={(value, name) => [`${value} books`, name]}
+                            contentStyle={{ 
+                              backgroundColor: '#fff',
+                              borderColor: '#ddd',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-md border">
-              <CardHeader>
-                <CardTitle className="text-purple-700">Equipment Status Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[160px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={equipmentStatusData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={60}
-                        fill="#8884d8"
-                        dataKey="value"
-                        nameKey="name"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      >
-                        {equipmentStatusData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex justify-center gap-4 mt-2">
-                  {equipmentStatusData.map((item, index) => (
-                    <div key={index} className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-xs">{item.name}</span>
+                    <div className="flex justify-center gap-4 mt-1">
+                      {bookStatusData.map((item, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          <span className="text-xs">{item.name}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                  <div>
+                    <h4 className="text-center text-sm font-medium mb-1">Equipment</h4>
+                    <div className="h-[140px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={equipmentStatusData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={50}
+                            fill="#8884d8"
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {equipmentStatusData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            formatter={(value, name) => [`${value} items`, name]}
+                            contentStyle={{ 
+                              backgroundColor: '#fff',
+                              borderColor: '#ddd',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex justify-center gap-4 mt-1">
+                      {equipmentStatusData.map((item, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          <span className="text-xs">{item.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
         
-        <Card className="bg-white shadow-md border">
-          <CardHeader>
-            <CardTitle className="text-blue-700">Recent Activities</CardTitle>
+        <Card className="bg-white shadow-md border border-purple-100">
+          <CardHeader className="border-b border-purple-50 pb-3">
+            <CardTitle className="text-purple-700 text-lg">Recent Activities</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-4">
+            <div className="space-y-1">
               {recentActivities.map((activity) => (
                 <div 
                   key={activity.id} 
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border-b last:border-0"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-purple-50 border-b last:border-0 transition-colors"
                 >
                   <div>
                     <p className="font-medium text-gray-800">{activity.user}</p>

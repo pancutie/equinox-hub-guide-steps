@@ -27,7 +27,7 @@ export default function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] border-red-200">
+      <DialogContent className="sm:max-w-[425px] border-red-200 bg-white">
         <DialogHeader className="flex flex-col items-center gap-2 mb-2">
           <div className="rounded-full bg-red-100 p-3 animate-pulse">
             <AlertTriangle className="h-6 w-6 text-red-600" />

@@ -14,35 +14,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 270 76% 53.3%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 270 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 270 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 270 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 270 31.8% 91.4%;
+    --input: 270 31.8% 91.4%;
+    --ring: 270 76% 53.3%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-background: 270 30% 96%;
+    --sidebar-foreground: 270 5.3% 26.1%;
+    --sidebar-primary: 270 76% 53.3%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 211 100% 96%;
-    --sidebar-accent-foreground: 221.2 83.2% 53.3%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
+    --sidebar-accent: 270 100% 96%;
+    --sidebar-accent-foreground: 270 76% 53.3%;
+    --sidebar-border: 270 31.8% 91.4%;
+    --sidebar-ring: 270 76% 53.3%;
   }
 
   .dark {
@@ -55,33 +55,33 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 270 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 270 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 270 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 270 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 270 32.6% 17.5%;
+    --input: 270 32.6% 17.5%;
+    --ring: 270 76.3% 48%;
     
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 270 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent: 270 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --sidebar-border: 270 32.6% 17.5%;
+    --sidebar-ring: 270 76.3% 48%;
   }
 }
 
@@ -96,16 +96,16 @@
 }
 
 @layer utilities {
-  .gradient-blue {
-    @apply bg-gradient-to-r from-blue-600 to-indigo-600;
-  }
-  
-  .gradient-green {
-    @apply bg-gradient-to-r from-emerald-500 to-teal-500;
-  }
-  
   .gradient-purple {
     @apply bg-gradient-to-r from-purple-600 to-indigo-600;
+  }
+  
+  .gradient-violet {
+    @apply bg-gradient-to-r from-violet-500 to-purple-500;
+  }
+  
+  .gradient-indigo {
+    @apply bg-gradient-to-r from-indigo-600 to-blue-600;
   }
   
   .gradient-amber {
@@ -126,13 +126,64 @@
   
   .card-shine::after {
     content: '';
-    @apply absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full;
+    @apply absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full;
     animation: shimmer 3s infinite;
   }
   
   @keyframes shimmer {
     100% {
       transform: translateX(200%);
+    }
+  }
+
+  .purple-shadow {
+    box-shadow: 0 4px 20px -5px rgba(139, 92, 246, 0.3);
+  }
+
+  .animation-pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 }

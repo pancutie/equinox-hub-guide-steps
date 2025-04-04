@@ -13,11 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Bell } from "lucide-react";
 import AddEquipmentDialog from "@/components/equipment/AddEquipmentDialog";
 import EditEquipmentDialog from "@/components/equipment/EditEquipmentDialog";
 import DeleteConfirmDialog from "@/components/shared/DeleteConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
+import NotificationPopover from "@/components/shared/NotificationPopover";
 
 // Equipment data structure
 export interface Equipment {
@@ -53,7 +54,6 @@ const EquipmentPage = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
-  const [activeTab, setActiveTab] = useState("standard"); // "standard" or "inventory"
   const { toast } = useToast();
   
   const filteredEquipment = equipment.filter(item => 
@@ -99,176 +99,107 @@ const EquipmentPage = () => {
 
   return (
     <MainLayout>
-      <Card className="mb-6 border shadow-sm bg-white">
+      <Card className="mb-6 border shadow-sm bg-white border-purple-100">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={18} />
               <Input 
                 placeholder="Search for equipment..." 
-                className="pl-10"
+                className="pl-10 border-purple-200 focus-visible:ring-purple-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-              onClick={() => setIsAddDialogOpen(true)}
-            >
-              <Plus size={18} />
-              Add New Equipment
-            </Button>
-          </div>
-          
-          <div className="mb-4">
             <div className="flex gap-2">
+              <NotificationPopover />
               <Button 
-                variant={activeTab === "standard" ? "default" : "outline"}
-                className={activeTab === "standard" ? "bg-blue-600 hover:bg-blue-700" : ""}
-                onClick={() => setActiveTab("standard")}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
+                onClick={() => setIsAddDialogOpen(true)}
               >
-                Standard View
-              </Button>
-              <Button 
-                variant={activeTab === "inventory" ? "default" : "outline"}
-                className={activeTab === "inventory" ? "bg-blue-600 hover:bg-blue-700" : ""}
-                onClick={() => setActiveTab("inventory")}
-              >
-                Inventory View
+                <Plus size={18} />
+                Add New Equipment
               </Button>
             </div>
           </div>
           
-          <div className="rounded-md border overflow-hidden shadow-sm">
-            {activeTab === "standard" ? (
-              <Table>
-                <TableCaption>List of all equipment in the inventory (Standard View)</TableCaption>
-                <TableHeader className="bg-gray-50">
-                  <TableRow>
-                    <TableHead>Property No.</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Unit</TableHead>
-                    <TableHead>Date Acquired</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEquipment.length > 0 ? (
-                    filteredEquipment.map((item) => (
-                      <TableRow key={item.id} className="hover:bg-gray-50">
-                        <TableCell className="font-medium">{item.propertyNo}</TableCell>
-                        <TableCell>{item.description}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{item.unit}</TableCell>
-                        <TableCell>{item.dateAcquired}</TableCell>
-                        <TableCell>₱{item.amount.toLocaleString()}</TableCell>
-                        <TableCell>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            item.status === "Available" 
-                              ? "bg-green-100 text-green-800"
-                              : "bg-amber-100 text-amber-800"
-                          }`}>
-                            {item.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedEquipment(item);
-                                setIsEditDialogOpen(true);
-                              }}
-                            >
-                              <Edit size={16} />
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedEquipment(item);
-                                setIsDeleteDialogOpen(true);
-                              }}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                        No equipment found. Try adjusting your search or add a new equipment.
+          <div className="rounded-md border border-purple-100 overflow-hidden shadow-sm">
+            <Table>
+              <TableCaption>List of all equipment in the inventory</TableCaption>
+              <TableHeader className="bg-purple-50">
+                <TableRow>
+                  <TableHead className="text-purple-700">Property No.</TableHead>
+                  <TableHead className="text-purple-700">Description</TableHead>
+                  <TableHead className="text-purple-700">Quantity</TableHead>
+                  <TableHead className="text-purple-700">Unit</TableHead>
+                  <TableHead className="text-purple-700">Date Acquired</TableHead>
+                  <TableHead className="text-purple-700">Amount</TableHead>
+                  <TableHead className="text-purple-700">Inv. Item No.</TableHead>
+                  <TableHead className="text-purple-700">Est. Useful Life</TableHead>
+                  <TableHead className="text-purple-700">Total</TableHead>
+                  <TableHead className="text-purple-700">Status</TableHead>
+                  <TableHead className="text-right text-purple-700">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredEquipment.length > 0 ? (
+                  filteredEquipment.map((item) => (
+                    <TableRow key={item.id} className="hover:bg-purple-50/50">
+                      <TableCell className="font-medium">{item.propertyNo}</TableCell>
+                      <TableCell>{item.description}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                      <TableCell>{item.unit}</TableCell>
+                      <TableCell>{item.dateAcquired}</TableCell>
+                      <TableCell>₱{item.amount.toLocaleString()}</TableCell>
+                      <TableCell>{item.inventoryItemNo || 'N/A'}</TableCell>
+                      <TableCell>{item.estimatedUsefulLife || 'N/A'}</TableCell>
+                      <TableCell>₱{(item.totalAmount || (item.quantity * item.amount)).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          item.status === "Available" 
+                            ? "bg-green-100 text-green-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}>
+                          {item.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedEquipment(item);
+                              setIsEditDialogOpen(true);
+                            }}
+                            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+                          >
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedEquipment(item);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            ) : (
-              <Table>
-                <TableCaption>List of all equipment in the inventory (Inventory View)</TableCaption>
-                <TableHeader className="bg-gray-50">
+                  ))
+                ) : (
                   <TableRow>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Unit</TableHead>
-                    <TableHead>Inventory Item No.</TableHead>
-                    <TableHead>Estimated Useful Life</TableHead>
-                    <TableHead>Total Amount</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+                      No equipment found. Try adjusting your search or add a new equipment.
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEquipment.length > 0 ? (
-                    filteredEquipment.map((item) => (
-                      <TableRow key={item.id} className="hover:bg-gray-50">
-                        <TableCell>{item.description}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{item.unit}</TableCell>
-                        <TableCell>{item.inventoryItemNo || 'N/A'}</TableCell>
-                        <TableCell>{item.estimatedUsefulLife || 'N/A'}</TableCell>
-                        <TableCell>₱{(item.totalAmount || (item.quantity * item.amount)).toLocaleString()}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedEquipment(item);
-                                setIsEditDialogOpen(true);
-                              }}
-                            >
-                              <Edit size={16} />
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedEquipment(item);
-                                setIsDeleteDialogOpen(true);
-                              }}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        No equipment found. Try adjusting your search or add a new equipment.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            )}
+                )}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
