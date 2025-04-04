@@ -42,10 +42,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        <Sidebar>
+        <Sidebar className="border-r shadow-sm">
           <SidebarHeader>
-            <div className="flex items-center justify-center p-4">
-              <h1 className="text-2xl font-bold text-primary">Equinox Library</h1>
+            <div className="flex flex-col items-center justify-center p-4">
+              <h1 className="text-xl font-bold text-primary">RIC-XI</h1>
+              <p className="text-sm text-muted-foreground">Inventory System</p>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -92,7 +93,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               
               <SidebarMenuItem>
                 <SidebarMenuButton 
-                  isActive={activeItem === '/reports'} 
+                  isActive={activeItem.startsWith('/reports')} 
                   onClick={() => handleNavigation('/reports')}
                 >
                   <FileIcon />
@@ -115,30 +116,32 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="p-4">
               <Button 
                 variant="outline" 
-                className="w-full flex items-center gap-2 text-red-600 hover:text-red-700"
+                className="w-full flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                 onClick={handleLogout}
               >
                 <LogOut size={16} />
                 <span>Logout</span>
               </Button>
-              <div className="mt-4 text-xs text-muted-foreground">
-                © 2025 Equinox Library System
+              <div className="mt-4 text-xs text-center text-muted-foreground">
+                © 2025 RIC-XI Inventory System
               </div>
             </div>
           </SidebarFooter>
         </Sidebar>
         
-        <div className="flex-1 p-6">
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="md:hidden" />
-              <h2 className="text-2xl font-bold">{getPageTitle(activeItem)}</h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="bg-primary text-white px-4 py-2 rounded-md">Admin</div>
+        <div className="flex-1 flex flex-col">
+          <div className="bg-white border-b shadow-sm p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="md:hidden" />
+                <h2 className="text-xl font-bold text-primary">{getPageTitle(activeItem)}</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="bg-primary text-white px-3 py-1 rounded-md text-sm">Admin</div>
+              </div>
             </div>
           </div>
-          <main>{children}</main>
+          <main className="flex-1 p-6 overflow-auto">{children}</main>
         </div>
       </div>
     </SidebarProvider>
@@ -172,7 +175,7 @@ function getPageTitle(path: string): string {
     case '/reports/overdue-equipment':
       return 'Overdue Equipment';
     default:
-      return 'Equinox Library';
+      return 'RIC-XI Inventory';
   }
 }
 

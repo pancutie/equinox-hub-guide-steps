@@ -1,99 +1,139 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Book } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 
-const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+const formSchema = z.object({
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
+  rememberMe: z.boolean().optional(),
+});
+
+export default function LoginForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      rememberMe: false,
+    },
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // In a real app, you would authenticate with a backend
-    // For now, we'll simulate authentication with admin/admin
+    // This is a mock authentication - in a real app, you would call an API
     setTimeout(() => {
-      if (username === "admin" && password === "admin") {
+      setIsLoading(false);
+      
+      // Mock credentials - in a real app, this would be handled securely
+      if (values.username === "admin" && values.password === "admin") {
         localStorage.setItem("isAuthenticated", "true");
+        
+        if (values.rememberMe) {
+          localStorage.setItem("rememberedUser", values.username);
+        } else {
+          localStorage.removeItem("rememberedUser");
+        }
+        
         toast({
-          title: "Success",
-          description: "You have successfully logged in",
-          variant: "default",
+          title: "Login successful",
+          description: "Welcome to RIC-XI Inventory System",
         });
+        
         navigate("/");
       } else {
         toast({
-          title: "Login Failed",
-          description: "Invalid username or password",
           variant: "destructive",
+          title: "Login failed",
+          description: "Invalid username or password",
         });
       }
-      setIsLoading(false);
     }, 1000);
-  };
+  }
 
   return (
-    <Card className="w-full max-w-md shadow-xl">
-      <CardHeader className="space-y-1 text-center">
-        <div className="flex justify-center mb-2">
-          <div className="bg-primary/10 p-3 rounded-full">
-            <Book className="h-6 w-6 text-primary" />
-          </div>
-        </div>
-        <CardTitle className="text-2xl font-bold">Equinox Library System</CardTitle>
-        <CardDescription>Enter your credentials to access the admin panel</CardDescription>
+    <Card className="w-full max-w-md shadow-lg border-0">
+      <CardHeader className="space-y-2 text-center">
+        <CardTitle className="text-3xl font-bold text-primary">RIC-XI Inventory System</CardTitle>
+        <CardDescription>
+          Enter your credentials to access the system
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <form onSubmit={handleLogin}>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input 
-                id="username" 
-                placeholder="admin"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Button type="button" variant="link" className="px-0 font-normal h-auto">
-                  Forgot password?
-                </Button>
-              </div>
-              <Input 
-                id="password" 
-                type="password"
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <Button className="w-full mt-6" type="submit" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Enter your password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rememberMe"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Remember me</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter className="flex flex-col">
-        <p className="text-xs text-center text-muted-foreground mt-2">
-          This system is for authorized personnel only. Unauthorized access is prohibited.
-        </p>
+      <CardFooter className="text-center text-sm text-muted-foreground">
+        <p className="w-full">Default credentials: admin / admin</p>
       </CardFooter>
     </Card>
   );
-};
-
-export default LoginForm;
+}
