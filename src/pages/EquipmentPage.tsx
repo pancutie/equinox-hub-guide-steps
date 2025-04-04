@@ -29,18 +29,21 @@ export interface Equipment {
   dateAcquired: string;
   amount: number;
   status: "Available" | "Borrowed";
+  inventoryItemNo?: string;
+  estimatedUsefulLife?: string;
+  totalAmount?: number;
 }
 
 // Mock data - in a real app, this would come from a database
 const initialEquipment = [
-  { id: 1, propertyNo: "E1001", description: "Microscope", quantity: 5, unit: "pcs", dateAcquired: "2021-05-15", amount: 25000, status: "Available" },
-  { id: 2, propertyNo: "E1002", description: "Projector", quantity: 3, unit: "pcs", dateAcquired: "2020-11-30", amount: 15000, status: "Borrowed" },
-  { id: 3, propertyNo: "E1003", description: "Laboratory Kit", quantity: 10, unit: "sets", dateAcquired: "2022-01-20", amount: 8000, status: "Available" },
-  { id: 4, propertyNo: "E1004", description: "Tablet", quantity: 8, unit: "pcs", dateAcquired: "2021-09-10", amount: 12000, status: "Borrowed" },
-  { id: 5, propertyNo: "E1005", description: "Laptop", quantity: 4, unit: "pcs", dateAcquired: "2022-03-05", amount: 35000, status: "Available" },
-  { id: 6, propertyNo: "E1006", description: "3D Printer", quantity: 1, unit: "pc", dateAcquired: "2021-12-15", amount: 50000, status: "Borrowed" },
-  { id: 7, propertyNo: "E1007", description: "Digital Camera", quantity: 2, unit: "pcs", dateAcquired: "2020-06-22", amount: 18000, status: "Available" },
-  { id: 8, propertyNo: "E1008", description: "Audio Mixer", quantity: 1, unit: "pc", dateAcquired: "2022-02-10", amount: 22000, status: "Available" },
+  { id: 1, propertyNo: "E1001", description: "Microscope", quantity: 5, unit: "pcs", dateAcquired: "2021-05-15", amount: 25000, status: "Available" as const, inventoryItemNo: "INV-001", estimatedUsefulLife: "5 years", totalAmount: 125000 },
+  { id: 2, propertyNo: "E1002", description: "Projector", quantity: 3, unit: "pcs", dateAcquired: "2020-11-30", amount: 15000, status: "Borrowed" as const, inventoryItemNo: "INV-002", estimatedUsefulLife: "3 years", totalAmount: 45000 },
+  { id: 3, propertyNo: "E1003", description: "Laboratory Kit", quantity: 10, unit: "sets", dateAcquired: "2022-01-20", amount: 8000, status: "Available" as const, inventoryItemNo: "INV-003", estimatedUsefulLife: "4 years", totalAmount: 80000 },
+  { id: 4, propertyNo: "E1004", description: "Tablet", quantity: 8, unit: "pcs", dateAcquired: "2021-09-10", amount: 12000, status: "Borrowed" as const, inventoryItemNo: "INV-004", estimatedUsefulLife: "3 years", totalAmount: 96000 },
+  { id: 5, propertyNo: "E1005", description: "Laptop", quantity: 4, unit: "pcs", dateAcquired: "2022-03-05", amount: 35000, status: "Available" as const, inventoryItemNo: "INV-005", estimatedUsefulLife: "5 years", totalAmount: 140000 },
+  { id: 6, propertyNo: "E1006", description: "3D Printer", quantity: 1, unit: "pc", dateAcquired: "2021-12-15", amount: 50000, status: "Borrowed" as const, inventoryItemNo: "INV-006", estimatedUsefulLife: "5 years", totalAmount: 50000 },
+  { id: 7, propertyNo: "E1007", description: "Digital Camera", quantity: 2, unit: "pcs", dateAcquired: "2020-06-22", amount: 18000, status: "Available" as const, inventoryItemNo: "INV-007", estimatedUsefulLife: "4 years", totalAmount: 36000 },
+  { id: 8, propertyNo: "E1008", description: "Audio Mixer", quantity: 1, unit: "pc", dateAcquired: "2022-02-10", amount: 22000, status: "Available" as const, inventoryItemNo: "INV-008", estimatedUsefulLife: "5 years", totalAmount: 22000 },
 ];
 
 const EquipmentPage = () => {
@@ -50,6 +53,7 @@ const EquipmentPage = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [activeTab, setActiveTab] = useState("standard"); // "standard" or "inventory"
   const { toast } = useToast();
   
   const filteredEquipment = equipment.filter(item => 
@@ -95,7 +99,7 @@ const EquipmentPage = () => {
 
   return (
     <MainLayout>
-      <Card className="mb-6 border shadow-sm">
+      <Card className="mb-6 border shadow-sm bg-white">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
             <div className="relative flex-1">
@@ -108,7 +112,7 @@ const EquipmentPage = () => {
               />
             </div>
             <Button 
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               onClick={() => setIsAddDialogOpen(true)}
             >
               <Plus size={18} />
@@ -116,75 +120,155 @@ const EquipmentPage = () => {
             </Button>
           </div>
           
-          <div className="rounded-md border overflow-hidden">
-            <Table>
-              <TableCaption>List of all equipment in the inventory</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Property No.</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Unit</TableHead>
-                  <TableHead>Date Acquired</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredEquipment.length > 0 ? (
-                  filteredEquipment.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.propertyNo}</TableCell>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>{item.unit}</TableCell>
-                      <TableCell>{item.dateAcquired}</TableCell>
-                      <TableCell>₱{item.amount.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          item.status === "Available" 
-                            ? "bg-green-100 text-green-800"
-                            : "bg-amber-100 text-amber-800"
-                        }`}>
-                          {item.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              setSelectedEquipment(item);
-                              setIsEditDialogOpen(true);
-                            }}
-                          >
-                            <Edit size={16} />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              setSelectedEquipment(item);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </Button>
-                        </div>
+          <div className="mb-4">
+            <div className="flex gap-2">
+              <Button 
+                variant={activeTab === "standard" ? "default" : "outline"}
+                className={activeTab === "standard" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                onClick={() => setActiveTab("standard")}
+              >
+                Standard View
+              </Button>
+              <Button 
+                variant={activeTab === "inventory" ? "default" : "outline"}
+                className={activeTab === "inventory" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                onClick={() => setActiveTab("inventory")}
+              >
+                Inventory View
+              </Button>
+            </div>
+          </div>
+          
+          <div className="rounded-md border overflow-hidden shadow-sm">
+            {activeTab === "standard" ? (
+              <Table>
+                <TableCaption>List of all equipment in the inventory (Standard View)</TableCaption>
+                <TableHeader className="bg-gray-50">
+                  <TableRow>
+                    <TableHead>Property No.</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Date Acquired</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredEquipment.length > 0 ? (
+                    filteredEquipment.map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">{item.propertyNo}</TableCell>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.unit}</TableCell>
+                        <TableCell>{item.dateAcquired}</TableCell>
+                        <TableCell>₱{item.amount.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            item.status === "Available" 
+                              ? "bg-green-100 text-green-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}>
+                            {item.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedEquipment(item);
+                                setIsEditDialogOpen(true);
+                              }}
+                            >
+                              <Edit size={16} />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedEquipment(item);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        No equipment found. Try adjusting your search or add a new equipment.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
+                  )}
+                </TableBody>
+              </Table>
+            ) : (
+              <Table>
+                <TableCaption>List of all equipment in the inventory (Inventory View)</TableCaption>
+                <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      No equipment found. Try adjusting your search or add a new equipment.
-                    </TableCell>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Inventory Item No.</TableHead>
+                    <TableHead>Estimated Useful Life</TableHead>
+                    <TableHead>Total Amount</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredEquipment.length > 0 ? (
+                    filteredEquipment.map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gray-50">
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.unit}</TableCell>
+                        <TableCell>{item.inventoryItemNo || 'N/A'}</TableCell>
+                        <TableCell>{item.estimatedUsefulLife || 'N/A'}</TableCell>
+                        <TableCell>₱{(item.totalAmount || (item.quantity * item.amount)).toLocaleString()}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedEquipment(item);
+                                setIsEditDialogOpen(true);
+                              }}
+                            >
+                              <Edit size={16} />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedEquipment(item);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No equipment found. Try adjusting your search or add a new equipment.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </CardContent>
       </Card>

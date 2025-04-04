@@ -32,14 +32,14 @@ export interface Book {
 
 // Mock data - in a real app, this would come from a database
 const initialBooks = [
-  { id: 1, bookNo: "B1001", title: "Introduction to Programming", author: "John Smith", location: "Shelf A", year: 2020, status: "Available" },
-  { id: 2, bookNo: "B1002", title: "Advanced Web Development", author: "Sarah Jones", location: "Shelf B", year: 2021, status: "Borrowed" },
-  { id: 3, bookNo: "B1003", title: "Database Management", author: "Michael Brown", location: "Shelf A", year: 2019, status: "Available" },
-  { id: 4, bookNo: "B1004", title: "Algorithms and Data Structures", author: "Emily Clark", location: "Shelf C", year: 2022, status: "Available" },
-  { id: 5, bookNo: "B1005", title: "Machine Learning Basics", author: "David Wilson", location: "Shelf B", year: 2020, status: "Borrowed" },
-  { id: 6, bookNo: "B1006", title: "Computer Networks", author: "Jessica Martin", location: "Shelf D", year: 2018, status: "Available" },
-  { id: 7, bookNo: "B1007", title: "Software Engineering", author: "Robert Johnson", location: "Shelf C", year: 2021, status: "Borrowed" },
-  { id: 8, bookNo: "B1008", title: "Cloud Computing", author: "Patricia Miller", location: "Shelf D", year: 2022, status: "Available" },
+  { id: 1, bookNo: "B1001", title: "Introduction to Database", author: "John Smith", location: "Shelf A", year: 2020, status: "Available" as const },
+  { id: 2, bookNo: "B1002", title: "Advanced Web Development", author: "Sarah Jones", location: "Shelf B", year: 2021, status: "Borrowed" as const },
+  { id: 3, bookNo: "B1003", title: "Database Management", author: "Robert Johnson", location: "Shelf A", year: 2019, status: "Available" as const },
+  { id: 4, bookNo: "B1004", title: "Artificial Intelligence", author: "Michael Brown", location: "Shelf C", year: 2022, status: "Available" as const },
+  { id: 5, bookNo: "B1005", title: "Machine Learning Basics", author: "David Wilson", location: "Shelf B", year: 2020, status: "Borrowed" as const },
+  { id: 6, bookNo: "B1006", title: "Cybersecurity Fundamentals", author: "Emma Davis", location: "Shelf C", year: 2021, status: "Available" as const },
+  { id: 7, bookNo: "B1007", title: "Software Engineering", author: "Robert Johnson", location: "Shelf C", year: 2021, status: "Borrowed" as const },
+  { id: 8, bookNo: "B1008", title: "Mobile App Development", author: "Jennifer Lee", location: "Shelf A", year: 2022, status: "Available" as const },
 ];
 
 const BooksPage = () => {
@@ -71,7 +71,7 @@ const BooksPage = () => {
     });
   };
 
-  // Function to edit a book
+  // Function to edit book
   const handleEditBook = (updatedBook: Book) => {
     setBooks(books.map(book => book.id === updatedBook.id ? updatedBook : book));
     setIsEditDialogOpen(false);
@@ -81,7 +81,7 @@ const BooksPage = () => {
     });
   };
 
-  // Function to delete a book
+  // Function to delete book
   const handleDeleteBook = () => {
     if (selectedBook) {
       setBooks(books.filter(book => book.id !== selectedBook.id));
