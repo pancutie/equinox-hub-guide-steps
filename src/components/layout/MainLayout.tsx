@@ -12,9 +12,10 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from "@/components/ui/sidebar";
-import { Book, Database, Calendar, LayoutDashboard, FileIcon, Settings, LogOut } from "lucide-react";
+import { Book, Database, Calendar, LayoutDashboard, FileIcon, Settings, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -42,21 +43,25 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        <Sidebar className="border-r shadow-sm">
-          <SidebarHeader>
-            <div className="flex flex-col items-center justify-center p-4">
-              <h1 className="text-xl font-bold text-primary">RIC-XI</h1>
-              <p className="text-sm text-muted-foreground">Inventory System</p>
+        <Sidebar className="border-r shadow-md">
+          <SidebarHeader className="bg-gradient-to-r from-blue-700 to-blue-900 text-white">
+            <div className="flex flex-col items-center justify-center p-6">
+              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-3">
+                <h1 className="text-2xl font-bold text-white">RIC</h1>
+              </div>
+              <h1 className="text-xl font-bold">RIC-XI</h1>
+              <p className="text-sm text-blue-100">Inventory System</p>
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="bg-gradient-to-b from-blue-50 to-white">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   isActive={activeItem === '/'} 
                   onClick={() => handleNavigation('/')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <LayoutDashboard />
+                  <LayoutDashboard className={activeItem === '/' ? "text-blue-600" : ""} />
                   <span>Dashboard</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -65,8 +70,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <SidebarMenuButton 
                   isActive={activeItem === '/books'} 
                   onClick={() => handleNavigation('/books')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <Book />
+                  <Book className={activeItem === '/books' ? "text-blue-600" : ""} />
                   <span>Books</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -75,8 +81,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <SidebarMenuButton 
                   isActive={activeItem === '/equipment'} 
                   onClick={() => handleNavigation('/equipment')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <Database />
+                  <Database className={activeItem === '/equipment' ? "text-blue-600" : ""} />
                   <span>Equipment</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -85,8 +92,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <SidebarMenuButton 
                   isActive={activeItem === '/borrowing'} 
                   onClick={() => handleNavigation('/borrowing')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <Calendar />
+                  <Calendar className={activeItem === '/borrowing' ? "text-blue-600" : ""} />
                   <span>Borrowing</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -95,8 +103,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <SidebarMenuButton 
                   isActive={activeItem.startsWith('/reports')} 
                   onClick={() => handleNavigation('/reports')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <FileIcon />
+                  <FileIcon className={activeItem.startsWith('/reports') ? "text-blue-600" : ""} />
                   <span>Reports</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -105,18 +114,19 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <SidebarMenuButton 
                   isActive={activeItem === '/settings'} 
                   onClick={() => handleNavigation('/settings')}
+                  className="hover:bg-blue-100 hover:text-blue-700"
                 >
-                  <Settings />
+                  <Settings className={activeItem === '/settings' ? "text-blue-600" : ""} />
                   <span>Settings</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter>
+          <SidebarFooter className="bg-gradient-to-t from-blue-50 to-white border-t">
             <div className="p-4">
               <Button 
                 variant="outline" 
-                className="w-full flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="w-full flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-100"
                 onClick={handleLogout}
               >
                 <LogOut size={16} />
@@ -134,14 +144,20 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <SidebarTrigger className="md:hidden" />
-                <h2 className="text-xl font-bold text-primary">{getPageTitle(activeItem)}</h2>
+                <h2 className="text-xl font-bold text-blue-800">{getPageTitle(activeItem)}</h2>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="bg-primary text-white px-3 py-1 rounded-md text-sm">Admin</div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 bg-blue-700">
+                    <AvatarFallback>A</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-gray-700 hidden md:inline">Admin User</span>
+                </div>
+                <div className="bg-blue-700 text-white px-3 py-1 rounded-md text-sm">Admin</div>
               </div>
             </div>
           </div>
-          <main className="flex-1 p-6 overflow-auto">{children}</main>
+          <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-gray-50 to-blue-50/30">{children}</main>
         </div>
       </div>
     </SidebarProvider>

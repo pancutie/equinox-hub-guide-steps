@@ -27,12 +27,12 @@ export default function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] border-red-200">
         <DialogHeader className="flex flex-col items-center gap-2 mb-2">
-          <div className="rounded-full bg-red-100 p-3">
+          <div className="rounded-full bg-red-100 p-3 animate-pulse">
             <AlertTriangle className="h-6 w-6 text-red-600" />
           </div>
-          <DialogTitle className="text-xl text-center">{title}</DialogTitle>
+          <DialogTitle className="text-xl text-center text-red-700">{title}</DialogTitle>
           <DialogDescription className="text-center">
             {description}
           </DialogDescription>
@@ -41,14 +41,14 @@ export default function DeleteConfirmDialog({
           <Button 
             variant="outline" 
             onClick={onClose}
-            className="flex-1"
+            className="flex-1 border-gray-300 hover:bg-gray-100 hover:text-gray-900"
           >
             Cancel
           </Button>
           <Button 
             variant="destructive" 
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700"
+            className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-md"
           >
             Delete
           </Button>

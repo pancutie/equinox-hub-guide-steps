@@ -1,25 +1,25 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCaption, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Check } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
+import { Search, Plus, Edit, Trash2, Calendar, ArrowRight, ArrowDown } from "lucide-react";
 import AddBorrowingDialog from "@/components/borrowing/AddBorrowingDialog";
+import DeleteConfirmDialog from "@/components/shared/DeleteConfirmDialog";
+import { useToast } from "@/hooks/use-toast";
 
-// Transaction type
-interface Transaction {
+// Transaction data structure
+export interface Transaction {
   id: number;
   transactionType: "Book" | "Equipment";
   itemNo: string;
@@ -31,69 +31,115 @@ interface Transaction {
 }
 
 // Mock data - in a real app, this would come from a database
-const initialTransactions = [
-  { id: 1, transactionType: "Book", itemNo: "B1002", description: "Advanced Web Development", borrower: "Juan Dela Cruz", borrowDate: "2023-03-15", returnDate: "2023-03-22", status: "Returned" as const },
-  { id: 2, transactionType: "Equipment", itemNo: "E1002", description: "Projector", borrower: "Maria Santos", borrowDate: "2023-03-18", returnDate: null, status: "Borrowed" as const },
-  { id: 3, transactionType: "Book", itemNo: "B1005", description: "Machine Learning Basics", borrower: "Pedro Reyes", borrowDate: "2023-03-20", returnDate: null, status: "Borrowed" as const },
-  { id: 4, transactionType: "Equipment", itemNo: "E1004", description: "Tablet", borrower: "Ana Gonzales", borrowDate: "2023-03-10", returnDate: "2023-03-17", status: "Returned" as const },
-  { id: 5, transactionType: "Book", itemNo: "B1007", description: "Software Engineering", borrower: "Carlos Tan", borrowDate: "2023-03-12", returnDate: null, status: "Borrowed" as const },
-  { id: 6, transactionType: "Equipment", itemNo: "E1006", description: "3D Printer", borrower: "Sofia Lim", borrowDate: "2023-03-14", returnDate: null, status: "Borrowed" as const },
-  { id: 7, transactionType: "Book", itemNo: "B1003", description: "Database Management", borrower: "Jose Garcia", borrowDate: "2023-03-05", returnDate: "2023-03-12", status: "Returned" as const },
-  { id: 8, transactionType: "Equipment", itemNo: "E1001", description: "Microscope", borrower: "Luisa Cruz", borrowDate: "2023-03-08", returnDate: "2023-03-15", status: "Returned" as const },
+const initialTransactions: Transaction[] = [
+  {
+    id: 1,
+    transactionType: "Book",
+    itemNo: "B1001",
+    description: "Introduction to Computer Science",
+    borrower: "Maria Santos",
+    borrowDate: "2023-05-15",
+    returnDate: "2023-05-30",
+    status: "Returned"
+  },
+  {
+    id: 2,
+    transactionType: "Equipment",
+    itemNo: "E1002",
+    description: "Projector",
+    borrower: "Juan Dela Cruz",
+    borrowDate: "2023-06-10",
+    returnDate: null,
+    status: "Borrowed"
+  },
+  {
+    id: 3,
+    transactionType: "Book",
+    itemNo: "B1003",
+    description: "Advanced Web Development",
+    borrower: "Carlos Tan",
+    borrowDate: "2023-07-05",
+    returnDate: null,
+    status: "Borrowed"
+  },
+  {
+    id: 4,
+    transactionType: "Equipment",
+    itemNo: "E1003",
+    description: "Laboratory Kit",
+    borrower: "Ana Gonzales",
+    borrowDate: "2023-07-20",
+    returnDate: "2023-08-15",
+    status: "Returned"
+  },
+  {
+    id: 5,
+    transactionType: "Book",
+    itemNo: "B1005",
+    description: "Software Engineering",
+    borrower: "Sofia Lim",
+    borrowDate: "2023-08-01",
+    returnDate: null,
+    status: "Borrowed"
+  }
 ];
 
 const BorrowingPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const { toast } = useToast();
-  
-  const filteredTransactions = transactions.filter(transaction => {
-    // Filter by search term
-    const matchesSearch = 
+
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
       transaction.itemNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.borrower.toLowerCase().includes(searchTerm.toLowerCase());
-      
-    // Filter by tab
-    if (activeTab === "all") return matchesSearch;
-    if (activeTab === "books") return matchesSearch && transaction.transactionType === "Book";
-    if (activeTab === "equipment") return matchesSearch && transaction.transactionType === "Equipment";
-    if (activeTab === "borrowed") return matchesSearch && transaction.status === "Borrowed";
-    if (activeTab === "returned") return matchesSearch && transaction.status === "Returned";
-    
-    return matchesSearch;
-  });
+      transaction.borrower.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleAddBorrowing = (newTransaction: Omit<Transaction, 'id' | 'status' | 'returnDate'>) => {
-    const transaction = {
-      ...newTransaction,
-      id: transactions.length ? Math.max(...transactions.map(t => t.id)) + 1 : 1,
-      status: "Borrowed" as const,
-      returnDate: null
+  // Function to add a new transaction
+  const handleAddTransaction = (transaction: Omit<Transaction, "id">) => {
+    const newTransaction = {
+      ...transaction,
+      id: transactions.length ? Math.max(...transactions.map((t) => t.id)) + 1 : 1,
     };
-    
-    setTransactions([...transactions, transaction]);
-    setIsAddDialogOpen(false);
+    setTransactions([...transactions, newTransaction]);
     toast({
       title: "Transaction Added",
-      description: `${transaction.transactionType} has been borrowed successfully`,
+      description: "New borrowing transaction has been added successfully",
     });
   };
 
-  const handleReturn = (transactionId: number) => {
-    const today = new Date().toISOString().split('T')[0];
-    
-    setTransactions(transactions.map(transaction => 
-      transaction.id === transactionId 
-        ? {...transaction, status: "Returned" as const, returnDate: today}
-        : transaction
-    ));
-    
+  // Function to delete a transaction
+  const handleDeleteTransaction = () => {
+    if (selectedTransaction) {
+      setTransactions(transactions.filter((item) => item.id !== selectedTransaction.id));
+      setIsDeleteDialogOpen(false);
+      toast({
+        title: "Transaction Deleted",
+        description: "Borrowing transaction has been deleted successfully",
+      });
+    }
+  };
+
+  // Function to mark a transaction as returned
+  const handleReturnItem = (transaction: Transaction) => {
+    const updatedTransactions = transactions.map((item) => {
+      if (item.id === transaction.id) {
+        return {
+          ...item,
+          status: "Returned" as const,
+          returnDate: new Date().toISOString().split("T")[0],
+        };
+      }
+      return item;
+    });
+    setTransactions(updatedTransactions);
     toast({
       title: "Item Returned",
-      description: "The item has been marked as returned",
+      description: `${transaction.description} has been marked as returned`,
     });
   };
 
@@ -104,14 +150,14 @@ const BorrowingPage = () => {
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <Input 
-                placeholder="Search transactions..." 
+              <Input
+                placeholder="Search borrowing transactions..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
+            <Button
               className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               onClick={() => setIsAddDialogOpen(true)}
             >
@@ -119,69 +165,87 @@ const BorrowingPage = () => {
               New Borrowing
             </Button>
           </div>
-          
-          <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-5 bg-slate-100">
-              <TabsTrigger value="all" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">All</TabsTrigger>
-              <TabsTrigger value="books" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Books</TabsTrigger>
-              <TabsTrigger value="equipment" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Equipment</TabsTrigger>
-              <TabsTrigger value="borrowed" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Borrowed</TabsTrigger>
-              <TabsTrigger value="returned" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Returned</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          
+
           <div className="rounded-md border overflow-hidden shadow-sm">
             <Table>
               <TableCaption>List of all borrowing transactions</TableCaption>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Item No.</TableHead>
+                  <TableHead className="w-[100px]">Item No.</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Borrower</TableHead>
-                  <TableHead>Date Borrowed</TableHead>
-                  <TableHead>Date Returned</TableHead>
+                  <TableHead>Borrow Date</TableHead>
+                  <TableHead>Return Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
-                  <TableRow key={transaction.id} className="hover:bg-gray-50">
-                    <TableCell>{transaction.transactionType}</TableCell>
-                    <TableCell className="font-medium">{transaction.itemNo}</TableCell>
-                    <TableCell>{transaction.description}</TableCell>
-                    <TableCell>{transaction.borrower}</TableCell>
-                    <TableCell>{transaction.borrowDate}</TableCell>
-                    <TableCell>{transaction.returnDate || "-"}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        transaction.status === "Returned" 
-                          ? "bg-green-100 text-green-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}>
-                        {transaction.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {transaction.status === "Borrowed" ? (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-1 hover:bg-green-50 hover:text-green-600 hover:border-green-200"
-                          onClick={() => handleReturn(transaction.id)}
+                {filteredTransactions.length > 0 ? (
+                  filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">{transaction.itemNo}</TableCell>
+                      <TableCell>{transaction.description}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            transaction.transactionType === "Book"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-purple-100 text-purple-800"
+                          }`}
                         >
-                          <Check size={14} />
-                          Return
-                        </Button>
-                      ) : (
-                        <Button variant="outline" size="sm" disabled>
-                          Returned
-                        </Button>
-                      )}
+                          {transaction.transactionType}
+                        </span>
+                      </TableCell>
+                      <TableCell>{transaction.borrower}</TableCell>
+                      <TableCell>{transaction.borrowDate}</TableCell>
+                      <TableCell>{transaction.returnDate || "Not returned"}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            transaction.status === "Returned"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}
+                        >
+                          {transaction.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          {transaction.status === "Borrowed" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+                              onClick={() => handleReturnItem(transaction)}
+                            >
+                              <ArrowDown size={16} className="mr-1" />
+                              Return
+                            </Button>
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedTransaction(transaction);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                      No transactions found. Try adjusting your search or add a new borrowing transaction.
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>
@@ -192,8 +256,19 @@ const BorrowingPage = () => {
       <AddBorrowingDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onSave={handleAddBorrowing}
+        onSave={handleAddTransaction}
       />
+
+      {/* Delete Confirm Dialog */}
+      {selectedTransaction && (
+        <DeleteConfirmDialog
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onConfirm={handleDeleteTransaction}
+          title="Delete Transaction"
+          description={`Are you sure you want to delete the borrowing record for "${selectedTransaction.description}"? This action cannot be undone.`}
+        />
+      )}
     </MainLayout>
   );
 };

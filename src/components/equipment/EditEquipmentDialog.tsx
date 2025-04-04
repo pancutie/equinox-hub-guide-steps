@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { Equipment } from "@/pages/EquipmentPage";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EditEquipmentDialogProps {
   isOpen: boolean;
@@ -25,153 +25,212 @@ export default function EditEquipmentDialog({
   isOpen, 
   onClose, 
   onSave, 
-  equipment 
+  equipment: initialEquipment 
 }: EditEquipmentDialogProps) {
-  const [editedEquipment, setEditedEquipment] = useState<Equipment>(equipment);
+  const [equipment, setEquipment] = useState<Equipment>(initialEquipment);
+  const [activeTab, setActiveTab] = useState("standard");
 
+  // Update local state when equipment prop changes
   useEffect(() => {
-    setEditedEquipment(equipment);
-  }, [equipment]);
+    setEquipment(initialEquipment);
+  }, [initialEquipment]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditedEquipment(prev => ({
-      ...prev,
-      [name]: name === "quantity" || name === "amount" 
-        ? parseInt(value) || 0 
-        : value
-    }));
-  };
-
-  const handleStatusChange = (value: string) => {
-    setEditedEquipment(prev => ({
-      ...prev,
-      status: value as "Available" | "Borrowed"
-    }));
+    
+    if (name === "quantity" || name === "amount") {
+      const numValue = parseInt(value) || 0;
+      setEquipment(prev => ({
+        ...prev,
+        [name]: numValue,
+        // Update totalAmount when quantity or amount changes
+        ...(name === "quantity" ? { totalAmount: numValue * prev.amount } : 
+           name === "amount" ? { totalAmount: numValue * prev.quantity } : {})
+      }));
+    } else {
+      setEquipment(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(editedEquipment);
+    onSave(equipment);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Equipment</DialogTitle>
+            <DialogTitle className="text-blue-700 text-xl">Edit Equipment</DialogTitle>
             <DialogDescription>
-              Update the details of the equipment. Click save when you're done.
+              Update the equipment details. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="propertyNo" className="text-right">
-                Property No.
-              </Label>
-              <Input
-                id="propertyNo"
-                name="propertyNo"
-                value={editedEquipment.propertyNo}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Input
-                id="description"
-                name="description"
-                value={editedEquipment.description}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantity" className="text-right">
-                Quantity
-              </Label>
-              <Input
-                id="quantity"
-                name="quantity"
-                type="number"
-                min="1"
-                value={editedEquipment.quantity}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="unit" className="text-right">
-                Unit
-              </Label>
-              <Input
-                id="unit"
-                name="unit"
-                value={editedEquipment.unit}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dateAcquired" className="text-right">
-                Date Acquired
-              </Label>
-              <Input
-                id="dateAcquired"
-                name="dateAcquired"
-                type="date"
-                value={editedEquipment.dateAcquired}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="amount" className="text-right">
-                Amount (₱)
-              </Label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                min="0"
-                value={editedEquipment.amount}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
-                Status
-              </Label>
-              <Select 
-                value={editedEquipment.status} 
-                onValueChange={handleStatusChange}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Available">Available</SelectItem>
-                  <SelectItem value="Borrowed">Borrowed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
+          
+          <Tabs defaultValue="standard" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="standard">Standard Details</TabsTrigger>
+              <TabsTrigger value="inventory">Inventory Details</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="standard" className="space-y-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="propertyNo" className="text-right">
+                  Property No.
+                </Label>
+                <Input
+                  id="propertyNo"
+                  name="propertyNo"
+                  value={equipment.propertyNo}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right">
+                  Description
+                </Label>
+                <Input
+                  id="description"
+                  name="description"
+                  value={equipment.description}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="quantity" className="text-right">
+                  Quantity
+                </Label>
+                <Input
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  value={equipment.quantity}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="unit" className="text-right">
+                  Unit
+                </Label>
+                <Input
+                  id="unit"
+                  name="unit"
+                  value={equipment.unit}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="dateAcquired" className="text-right">
+                  Date Acquired
+                </Label>
+                <Input
+                  id="dateAcquired"
+                  name="dateAcquired"
+                  type="date"
+                  value={equipment.dateAcquired}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="amount" className="text-right">
+                  Amount (₱)
+                </Label>
+                <Input
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  min="0"
+                  value={equipment.amount}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+                <select
+                  id="status"
+                  name="status"
+                  value={equipment.status}
+                  onChange={(e) => setEquipment({...equipment, status: e.target.value as "Available" | "Borrowed"})}
+                  className="col-span-3 border border-input bg-background h-10 px-3 py-2 text-sm rounded-md"
+                  required
+                >
+                  <option value="Available">Available</option>
+                  <option value="Borrowed">Borrowed</option>
+                </select>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="inventory" className="space-y-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="inventoryItemNo" className="text-right">
+                  Inventory Item No.
+                </Label>
+                <Input
+                  id="inventoryItemNo"
+                  name="inventoryItemNo"
+                  value={equipment.inventoryItemNo || ''}
+                  onChange={handleChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="estimatedUsefulLife" className="text-right">
+                  Estimated Useful Life
+                </Label>
+                <Input
+                  id="estimatedUsefulLife"
+                  name="estimatedUsefulLife"
+                  value={equipment.estimatedUsefulLife || ''}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  placeholder="e.g., 5 years"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="totalAmount" className="text-right">
+                  Total Amount (₱)
+                </Label>
+                <Input
+                  id="totalAmount"
+                  name="totalAmount"
+                  type="number"
+                  min="0"
+                  value={equipment.totalAmount || equipment.quantity * equipment.amount}
+                  onChange={handleChange}
+                  className="col-span-3"
+                  readOnly
+                />
+                <p className="col-span-4 text-right text-xs text-muted-foreground">
+                  Calculated from Quantity × Amount
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+          
+          <DialogFooter className="mt-6">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
           </DialogFooter>
         </form>
       </DialogContent>
