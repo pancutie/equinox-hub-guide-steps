@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BooksPage from "./pages/BooksPage";
 import EquipmentPage from "./pages/EquipmentPage";
+import EquipmentICPage from "./pages/equipment/EquipmentICPage";
+import EquipmentPARPage from "./pages/equipment/EquipmentPARPage";
 import BorrowingPage from "./pages/BorrowingPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -19,6 +21,11 @@ import BorrowedEquipmentPage from "./pages/reports/BorrowedEquipmentPage";
 import OverdueEquipmentPage from "./pages/reports/OverdueEquipmentPage";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ResearchProjectsPage from "./pages/projects/ResearchProjectsPage";
+import ExtensionProjectsPage from "./pages/projects/ExtensionProjectsPage";
+import ResearchActivitiesPage from "./pages/projects/ResearchActivitiesPage";
+import ExtensionActivitiesPage from "./pages/projects/ExtensionActivitiesPage";
+import YearDetailsPage from "./pages/projects/YearDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -49,11 +56,30 @@ const App = () => (
             }
           />
           
+          {/* Equipment Routes */}
           <Route
             path="/equipment"
             element={
               <ProtectedRoute>
                 <EquipmentPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/equipment/ics"
+            element={
+              <ProtectedRoute>
+                <EquipmentICPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/equipment/par"
+            element={
+              <ProtectedRoute>
+                <EquipmentPARPage />
               </ProtectedRoute>
             }
           />
@@ -67,6 +93,7 @@ const App = () => (
             }
           />
           
+          {/* Reports Routes */}
           <Route
             path="/reports"
             element={
@@ -135,6 +162,52 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <OverdueEquipmentPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Projects Routes */}
+          <Route
+            path="/projects/research"
+            element={
+              <ProtectedRoute>
+                <ResearchProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/projects/extension"
+            element={
+              <ProtectedRoute>
+                <ExtensionProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/projects/research-activities"
+            element={
+              <ProtectedRoute>
+                <ResearchActivitiesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/projects/extension-activities"
+            element={
+              <ProtectedRoute>
+                <ExtensionActivitiesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/projects/:projectType/:year"
+            element={
+              <ProtectedRoute>
+                <YearDetailsPage />
               </ProtectedRoute>
             }
           />

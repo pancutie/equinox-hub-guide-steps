@@ -1,7 +1,7 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import DashboardCard from "@/components/dashboard/DashboardCard";
-import { Book, Check, Database, AlertTriangle, BookOpen, Users, BarChart } from "lucide-react";
+import { Book, Check, Database, AlertTriangle, BookOpen, Users, BarChart, Clipboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -21,27 +21,32 @@ import NotificationPopover from "@/components/shared/NotificationPopover";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-// Mock data - in a real app, this would come from a database
+// Mock data for the dashboard
 const mockData = {
   availableBooks: 124,
   borrowedBooks: 45,
   overdueBooks: 12,
-  availableEquipment: 67,
-  borrowedEquipment: 23,
-  overdueEquipment: 5,
+  availableEquipmentICS: 45,
+  borrowedEquipmentICS: 15,
+  overdueEquipmentICS: 3,
+  availableEquipmentPAR: 22,
+  borrowedEquipmentPAR: 8,
+  overdueEquipmentPAR: 2,
   totalBooks: 181,
-  totalEquipment: 95,
-  totalUsers: 152
+  totalEquipmentICS: 63,
+  totalEquipmentPAR: 32,
+  totalRegisteredUsers: 152,
+  totalBorrowers: 78
 };
 
 // Monthly borrowing data for chart
 const borrowingData = [
-  { month: 'Jan', books: 32, equipment: 18 },
-  { month: 'Feb', books: 28, equipment: 15 },
-  { month: 'Mar', books: 34, equipment: 21 },
-  { month: 'Apr', books: 39, equipment: 25 },
-  { month: 'May', books: 45, equipment: 23 },
-  { month: 'Jun', books: 41, equipment: 19 },
+  { month: 'Jan', books: 32, equipmentICS: 18, equipmentPAR: 12 },
+  { month: 'Feb', books: 28, equipmentICS: 15, equipmentPAR: 10 },
+  { month: 'Mar', books: 34, equipmentICS: 21, equipmentPAR: 14 },
+  { month: 'Apr', books: 39, equipmentICS: 25, equipmentPAR: 16 },
+  { month: 'May', books: 45, equipmentICS: 23, equipmentPAR: 15 },
+  { month: 'Jun', books: 41, equipmentICS: 19, equipmentPAR: 13 },
 ];
 
 // Pie chart data
@@ -51,19 +56,34 @@ const bookStatusData = [
   { name: 'Overdue', value: mockData.overdueBooks, color: '#ef4444' },
 ];
 
-const equipmentStatusData = [
-  { name: 'Available', value: mockData.availableEquipment, color: '#9333ea' },
-  { name: 'Borrowed', value: mockData.borrowedEquipment, color: '#14b8a6' },
-  { name: 'Overdue', value: mockData.overdueEquipment, color: '#f97316' },
+const equipmentICSStatusData = [
+  { name: 'Available', value: mockData.availableEquipmentICS, color: '#9333ea' },
+  { name: 'Borrowed', value: mockData.borrowedEquipmentICS, color: '#14b8a6' },
+  { name: 'Overdue', value: mockData.overdueEquipmentICS, color: '#f97316' },
+];
+
+const equipmentPARStatusData = [
+  { name: 'Available', value: mockData.availableEquipmentPAR, color: '#6366f1' },
+  { name: 'Borrowed', value: mockData.borrowedEquipmentPAR, color: '#22c55e' },
+  { name: 'Overdue', value: mockData.overdueEquipmentPAR, color: '#f59e0b' },
 ];
 
 // Recent activity
 const recentActivities = [
-  { id: 1, user: "Maria Santos", action: "borrowed", item: "Projector", type: "Equipment", time: "3 hours ago" },
+  { id: 1, user: "Maria Santos", action: "borrowed", item: "Projector", type: "Equipment ICS", time: "3 hours ago" },
   { id: 2, user: "Juan Dela Cruz", action: "returned", item: "Advanced Web Development", type: "Book", time: "5 hours ago" },
-  { id: 3, user: "Carlos Tan", action: "borrowed", item: "Software Engineering", type: "Book", time: "1 day ago" },
-  { id: 4, user: "Ana Gonzales", action: "returned", item: "Tablet", type: "Equipment", time: "2 days ago" },
-  { id: 5, user: "Sofia Lim", action: "borrowed", item: "3D Printer", type: "Equipment", time: "3 days ago" },
+  { id: 3, user: "Carlos Tan", action: "borrowed", item: "Office Chair", type: "Equipment PAR", time: "8 hours ago" },
+  { id: 4, user: "Ana Gonzales", action: "returned", item: "Tablet", type: "Equipment ICS", time: "2 days ago" },
+  { id: 5, user: "Sofia Lim", action: "borrowed", item: "3D Printer", type: "Equipment ICS", time: "3 days ago" },
+];
+
+// User/borrower data
+const borrowers = [
+  { id: 1, name: "Juan Dela Cruz", role: "Student", borrowed: 3, overdue: 1 },
+  { id: 2, name: "Maria Santos", role: "Faculty", borrowed: 5, overdue: 0 },
+  { id: 3, name: "Carlos Tan", role: "Student", borrowed: 2, overdue: 2 },
+  { id: 4, name: "Ana Gonzales", role: "Staff", borrowed: 1, overdue: 0 },
+  { id: 5, name: "Sofia Lim", role: "Student", borrowed: 4, overdue: 1 },
 ];
 
 const Index = () => {
@@ -98,7 +118,7 @@ const Index = () => {
           
           <DashboardCard
             title="Total Equipment"
-            count={mockData.totalEquipment}
+            count={mockData.totalEquipmentICS + mockData.totalEquipmentPAR}
             icon={<Database size={20} />}
             linkTo="/equipment"
             bgColor="bg-gradient-to-br from-indigo-500 to-indigo-600"
@@ -107,7 +127,7 @@ const Index = () => {
           
           <DashboardCard
             title="Registered Users"
-            count={mockData.totalUsers}
+            count={mockData.totalRegisteredUsers}
             icon={<Users size={20} />}
             linkTo="/users"
             bgColor="bg-gradient-to-br from-violet-500 to-violet-600"
@@ -148,32 +168,64 @@ const Index = () => {
         </section>
         
         <section>
-          <h3 className="text-lg font-semibold mb-3 text-purple-800">Equipment Summary</h3>
+          <h3 className="text-lg font-semibold mb-3 text-purple-800">Equipment/ICS Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <DashboardCard
-              title="Available Equipment"
-              count={mockData.availableEquipment}
+              title="Available ICS"
+              count={mockData.availableEquipmentICS}
               icon={<Database size={20} />}
-              linkTo="/reports/available-equipment"
+              linkTo="/equipment/ics"
               bgColor="bg-gradient-to-br from-violet-400 to-violet-500"
               textColor="text-white"
             />
             
             <DashboardCard
-              title="Borrowed Equipment"
-              count={mockData.borrowedEquipment}
+              title="Borrowed ICS"
+              count={mockData.borrowedEquipmentICS}
               icon={<Check size={20} />}
-              linkTo="/reports/borrowed-equipment"
+              linkTo="/equipment/ics"
               bgColor="bg-gradient-to-br from-teal-500 to-teal-600"
               textColor="text-white"
             />
             
             <DashboardCard
-              title="Overdue Equipment"
-              count={mockData.overdueEquipment}
+              title="Overdue ICS"
+              count={mockData.overdueEquipmentICS}
               icon={<AlertTriangle size={20} />}
-              linkTo="/reports/overdue-equipment"
+              linkTo="/equipment/ics"
               bgColor="bg-gradient-to-br from-orange-500 to-orange-600"
+              textColor="text-white"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-lg font-semibold mb-3 text-purple-800">Equipment/PAR Summary</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <DashboardCard
+              title="Available PAR"
+              count={mockData.availableEquipmentPAR}
+              icon={<Clipboard size={20} />}
+              linkTo="/equipment/par"
+              bgColor="bg-gradient-to-br from-blue-400 to-blue-500"
+              textColor="text-white"
+            />
+            
+            <DashboardCard
+              title="Borrowed PAR"
+              count={mockData.borrowedEquipmentPAR}
+              icon={<Check size={20} />}
+              linkTo="/equipment/par"
+              bgColor="bg-gradient-to-br from-emerald-500 to-emerald-600"
+              textColor="text-white"
+            />
+            
+            <DashboardCard
+              title="Overdue PAR"
+              count={mockData.overdueEquipmentPAR}
+              icon={<AlertTriangle size={20} />}
+              linkTo="/equipment/par"
+              bgColor="bg-gradient-to-br from-amber-500 to-amber-600"
               textColor="text-white"
             />
           </div>
@@ -207,7 +259,8 @@ const Index = () => {
                     />
                     <Legend />
                     <Bar dataKey="books" name="Books" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="equipment" name="Equipment" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="equipmentICS" name="Equipment ICS" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="equipmentPAR" name="Equipment PAR" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                   </RechartsBarChart>
                 </ResponsiveContainer>
               </div>
@@ -220,10 +273,10 @@ const Index = () => {
                 <CardTitle className="text-purple-700 text-lg">Status Distribution</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-2">
                   <div>
                     <h4 className="text-center text-sm font-medium mb-1">Books</h4>
-                    <div className="h-[140px]">
+                    <div className="h-[120px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -231,7 +284,7 @@ const Index = () => {
                             cx="50%"
                             cy="50%"
                             labelLine={false}
-                            outerRadius={50}
+                            outerRadius={40}
                             fill="#8884d8"
                             dataKey="value"
                             nameKey="name"
@@ -252,31 +305,31 @@ const Index = () => {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="flex justify-center gap-4 mt-1">
+                    <div className="flex justify-center gap-2 mt-1">
                       {bookStatusData.map((item, index) => (
                         <div key={index} className="flex items-center gap-1">
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
                           <span className="text-xs">{item.name}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-center text-sm font-medium mb-1">Equipment</h4>
-                    <div className="h-[140px]">
+                    <h4 className="text-center text-sm font-medium mb-1">ICS</h4>
+                    <div className="h-[120px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={equipmentStatusData}
+                            data={equipmentICSStatusData}
                             cx="50%"
                             cy="50%"
                             labelLine={false}
-                            outerRadius={50}
+                            outerRadius={40}
                             fill="#8884d8"
                             dataKey="value"
                             nameKey="name"
                           >
-                            {equipmentStatusData.map((entry, index) => (
+                            {equipmentICSStatusData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
@@ -292,10 +345,50 @@ const Index = () => {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="flex justify-center gap-4 mt-1">
-                      {equipmentStatusData.map((item, index) => (
+                    <div className="flex justify-center gap-2 mt-1">
+                      {equipmentICSStatusData.map((item, index) => (
                         <div key={index} className="flex items-center gap-1">
-                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          <span className="text-xs">{item.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-center text-sm font-medium mb-1">PAR</h4>
+                    <div className="h-[120px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={equipmentPARStatusData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={40}
+                            fill="#8884d8"
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {equipmentPARStatusData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            formatter={(value, name) => [`${value} items`, name]}
+                            contentStyle={{ 
+                              backgroundColor: '#fff',
+                              borderColor: '#ddd',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex justify-center gap-2 mt-1">
+                      {equipmentPARStatusData.map((item, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
                           <span className="text-xs">{item.name}</span>
                         </div>
                       ))}
@@ -307,35 +400,73 @@ const Index = () => {
           </div>
         </div>
         
-        <Card className="bg-white shadow-md border border-purple-100">
-          <CardHeader className="border-b border-purple-50 pb-3">
-            <CardTitle className="text-purple-700 text-lg">Recent Activities</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="space-y-1">
-              {recentActivities.map((activity) => (
-                <div 
-                  key={activity.id} 
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-purple-50 border-b last:border-0 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium text-gray-800">{activity.user}</p>
-                    <p className="text-sm text-gray-600">
-                      {activity.action === "borrowed" ? (
-                        <span className="text-amber-600">Borrowed</span>
-                      ) : (
-                        <span className="text-green-600">Returned</span>
-                      )}{" "}
-                      <span className="font-medium">{activity.item}</span>
-                      <span className="text-gray-500"> ({activity.type})</span>
-                    </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="bg-white shadow-md border border-purple-100">
+            <CardHeader className="border-b border-purple-50 pb-3">
+              <CardTitle className="text-purple-700 text-lg">Recent Activities</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-1">
+                {recentActivities.map((activity) => (
+                  <div 
+                    key={activity.id} 
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-purple-50 border-b last:border-0 transition-colors"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-800">{activity.user}</p>
+                      <p className="text-sm text-gray-600">
+                        {activity.action === "borrowed" ? (
+                          <span className="text-amber-600">Borrowed</span>
+                        ) : (
+                          <span className="text-green-600">Returned</span>
+                        )}{" "}
+                        <span className="font-medium">{activity.item}</span>
+                        <span className="text-gray-500"> ({activity.type})</span>
+                      </p>
+                    </div>
+                    <span className="text-sm text-gray-500">{activity.time}</span>
                   </div>
-                  <span className="text-sm text-gray-500">{activity.time}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white shadow-md border border-purple-100">
+            <CardHeader className="border-b border-purple-50 pb-3">
+              <CardTitle className="text-purple-700 text-lg">Recent Borrowers</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-1">
+                {borrowers.map((borrower) => (
+                  <div 
+                    key={borrower.id} 
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-purple-50 border-b last:border-0 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-full bg-purple-100 w-10 h-10 flex items-center justify-center text-purple-700 font-medium">
+                        {borrower.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">{borrower.name}</p>
+                        <p className="text-xs text-gray-500">{borrower.role}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm">
+                        <span className="font-medium text-purple-700">{borrower.borrowed}</span> items borrowed
+                      </p>
+                      {borrower.overdue > 0 && (
+                        <p className="text-xs text-red-500">
+                          {borrower.overdue} overdue
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </MainLayout>
   );
