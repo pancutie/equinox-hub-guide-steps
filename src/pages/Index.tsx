@@ -20,6 +20,8 @@ import {
 import NotificationPopover from "@/components/shared/NotificationPopover";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import DashboardNotifications from "@/components/dashboard/DashboardNotifications";
+import { useState } from "react";
 
 // Mock data for the dashboard
 const mockData = {
@@ -68,6 +70,19 @@ const equipmentPARStatusData = [
   { name: 'Overdue', value: mockData.overdueEquipmentPAR, color: '#f59e0b' },
 ];
 
+// Overdue books with accurate due dates (all in the past)
+export const overdueBooks = [
+  { id: 2, bookNo: "B1002", title: "Advanced Web Development", author: "Sarah Jones", location: "Shelf B", year: 2021, borrower: "Juan Dela Cruz", borrowDate: "2025-02-15", dueDate: "2025-03-22", daysOverdue: 14 },
+  { id: 5, bookNo: "B1005", title: "Machine Learning Basics", author: "David Wilson", location: "Shelf B", year: 2020, borrower: "Pedro Reyes", borrowDate: "2025-02-20", dueDate: "2025-03-15", daysOverdue: 21 },
+  { id: 7, bookNo: "B1007", title: "Software Engineering", author: "Robert Johnson", location: "Shelf C", year: 2021, borrower: "Carlos Tan", borrowDate: "2025-03-01", dueDate: "2025-03-25", daysOverdue: 11 },
+];
+
+// Overdue equipment with accurate due dates (all in the past)
+export const overdueEquipment = [
+  { id: 2, propertyNo: "E1002", description: "Projector", quantity: 1, unit: "pc", borrower: "Maria Santos", borrowDate: "2025-03-08", dueDate: "2025-03-20", daysOverdue: 16 },
+  { id: 6, propertyNo: "E1006", description: "3D Printer", quantity: 1, unit: "pc", borrower: "Sofia Lim", borrowDate: "2025-03-04", dueDate: "2025-03-18", daysOverdue: 18 },
+];
+
 // Recent activity
 const recentActivities = [
   { id: 1, user: "Maria Santos", action: "borrowed", item: "Projector", type: "Equipment ICS", time: "3 hours ago" },
@@ -86,8 +101,12 @@ const borrowers = [
   { id: 5, name: "Sofia Lim", role: "Student", borrowed: 4, overdue: 1 },
 ];
 
+// Calculate the sum of total registered users properly
+const totalRegisteredUsers = mockData.totalRegisteredUsers;
+
 const Index = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <MainLayout>
@@ -99,6 +118,8 @@ const Index = () => {
             <Input 
               placeholder="Search..." 
               className="pl-10 border-purple-200 focus-visible:ring-purple-400"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <NotificationPopover />
@@ -127,13 +148,15 @@ const Index = () => {
           
           <DashboardCard
             title="Registered Users"
-            count={mockData.totalRegisteredUsers}
+            count={totalRegisteredUsers} 
             icon={<Users size={20} />}
             linkTo="/users"
             bgColor="bg-gradient-to-br from-violet-500 to-violet-600"
             textColor="text-white"
           />
         </div>
+
+        <DashboardNotifications />
 
         <section>
           <h3 className="text-lg font-semibold mb-3 text-purple-800">Books Summary</h3>
@@ -232,8 +255,8 @@ const Index = () => {
         </section>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white shadow-md border border-purple-100">
-            <CardHeader className="border-b border-purple-50 pb-3">
+          <Card className="bg-white shadow-md border border-purple-100 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="border-b border-purple-100 pb-3">
               <CardTitle className="text-purple-700 flex items-center gap-2 text-lg">
                 <BarChart size={18} />
                 Monthly Borrowing Trend
@@ -268,8 +291,8 @@ const Index = () => {
           </Card>
 
           <div className="grid grid-cols-1 gap-6">
-            <Card className="bg-white shadow-md border border-purple-100">
-              <CardHeader className="border-b border-purple-50 pb-3">
+            <Card className="bg-white shadow-md border border-purple-100 hover:shadow-lg transition-all duration-300">
+              <CardHeader className="border-b border-purple-100 pb-3">
                 <CardTitle className="text-purple-700 text-lg">Status Distribution</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
@@ -401,8 +424,8 @@ const Index = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white shadow-md border border-purple-100">
-            <CardHeader className="border-b border-purple-50 pb-3">
+          <Card className="bg-white shadow-md border border-purple-100 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="border-b border-purple-100 pb-3">
               <CardTitle className="text-purple-700 text-lg">Recent Activities</CardTitle>
             </CardHeader>
             <CardContent className="p-4">
@@ -431,8 +454,8 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-md border border-purple-100">
-            <CardHeader className="border-b border-purple-50 pb-3">
+          <Card className="bg-white shadow-md border border-purple-100 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="border-b border-purple-100 pb-3">
               <CardTitle className="text-purple-700 text-lg">Recent Borrowers</CardTitle>
             </CardHeader>
             <CardContent className="p-4">

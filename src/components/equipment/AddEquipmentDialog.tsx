@@ -1,4 +1,5 @@
-
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,213 +8,340 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Equipment } from "@/pages/EquipmentPage";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-interface AddEquipmentDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (equipment: Omit<Equipment, 'id'>) => void;
+// Define equipment type explicitly here instead of importing it
+export interface Equipment {
+  id: number;
+  propertyNo: string;
+  description: string;
+  quantity: number;
+  unit: string;
 }
 
-export default function AddEquipmentDialog({ isOpen, onClose, onSave }: AddEquipmentDialogProps) {
-  const [equipment, setEquipment] = useState<Omit<Equipment, 'id'>>({
-    propertyNo: "",
-    description: "",
-    quantity: 1,
-    unit: "",
-    dateAcquired: new Date().toISOString().split('T')[0],
-    amount: 0,
-    status: "Available",
-    inventoryItemNo: "",
-    estimatedUsefulLife: "",
-    totalAmount: 0
-  });
+const formSchema = z.object({
+  propertyNo: z.string().min(1, "Property number is required"),
+  description: z.string().min(1, "Description is required"),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  unit: z.string().min(1, "Unit is required"),
+  type: z.enum(["Standard", "Inventory"]),
+  // Additional fields for Inventory type equipment
+  inventoryItemNo: z.string().optional(),
+  estimatedUsefulLife: z.string().optional(),
+  risNo: z.string().optional(),
+  icsNo: z.string().optional(),
+  totalAmount: z.string().optional(),
+  dateAcquired: z.string().optional(),
+  parNo: z.string().optional(),
+  amount: z.string().optional(),
+});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === "quantity" || name === "amount") {
-      const numValue = parseInt(value) || 0;
-      setEquipment(prev => ({
-        ...prev,
-        [name]: numValue,
-        // Update totalAmount when quantity or amount changes
-        ...(name === "quantity" ? { totalAmount: numValue * prev.amount } : 
-           name === "amount" ? { totalAmount: numValue * prev.quantity } : {})
-      }));
-    } else {
-      setEquipment(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
+interface AddEquipmentDialogProps {
+  onAddEquipment: (equipment: Equipment) => void;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(equipment);
-    // Reset form
-    setEquipment({
+const AddEquipmentDialog = ({ onAddEquipment }: AddEquipmentDialogProps) => {
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+
+  // Use form from react-hook-form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
       propertyNo: "",
       description: "",
       quantity: 1,
-      unit: "",
-      dateAcquired: new Date().toISOString().split('T')[0],
-      amount: 0,
-      status: "Available",
+      unit: "pc",
+      type: "Standard",
       inventoryItemNo: "",
       estimatedUsefulLife: "",
-      totalAmount: 0
+      risNo: "",
+      icsNo: "",
+      totalAmount: "",
+      dateAcquired: "",
+      parNo: "",
+      amount: "",
+    },
+  });
+
+  // Form submission handler
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Basic equipment properties
+    const newEquipment: Equipment = {
+      id: Math.floor(Math.random() * 1000), // Generate a random ID
+      propertyNo: values.propertyNo,
+      description: values.description,
+      quantity: values.quantity,
+      unit: values.unit,
+    };
+
+    // Add the equipment
+    onAddEquipment(newEquipment);
+
+    // Show success message
+    toast({
+      title: "Equipment Added",
+      description: `${values.description} has been added successfully.`,
     });
+
+    // Close the dialog
+    setOpen(false);
+
+    // Reset the form
+    form.reset();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px] bg-white border-purple-200 shadow-lg">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-purple-700 text-xl font-bold">Add New Equipment</DialogTitle>
-            <DialogDescription>
-              Enter the details of the new equipment. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 mt-4">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="bg-purple-600 hover:bg-purple-700">
+          <Plus className="mr-1 h-5 w-5" />
+          Add Equipment
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle>Add New Equipment</DialogTitle>
+          <DialogDescription>Enter details for the new equipment.</DialogDescription>
+        </DialogHeader>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Equipment Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Standard" id="standard" />
+                        <label htmlFor="standard">Standard</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Inventory" id="inventory" />
+                        <label htmlFor="inventory">Inventory</label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="propertyNo">Property No.</Label>
-                  <Input
-                    id="propertyNo"
-                    name="propertyNo"
-                    value={equipment.propertyNo}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    name="description"
-                    value={equipment.description}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    min="1"
-                    value={equipment.quantity}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="unit">Unit</Label>
-                  <Input
-                    id="unit"
-                    name="unit"
-                    value={equipment.unit}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="dateAcquired">Date Acquired</Label>
-                  <Input
-                    id="dateAcquired"
-                    name="dateAcquired"
-                    type="date"
-                    value={equipment.dateAcquired}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="amount">Amount (₱)</Label>
-                  <Input
-                    id="amount"
-                    name="amount"
-                    type="number"
-                    min="0"
-                    value={equipment.amount}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="inventoryItemNo">Inventory Item No.</Label>
-                  <Input
-                    id="inventoryItemNo"
-                    name="inventoryItemNo"
-                    value={equipment.inventoryItemNo}
-                    onChange={handleChange}
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="estimatedUsefulLife">Estimated Useful Life</Label>
-                  <Input
-                    id="estimatedUsefulLife"
-                    name="estimatedUsefulLife"
-                    value={equipment.estimatedUsefulLife}
-                    onChange={handleChange}
-                    placeholder="e.g., 5 years"
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="totalAmount">Total Amount (₱)</Label>
-              <Input
-                id="totalAmount"
-                name="totalAmount"
-                type="number"
-                min="0"
-                value={equipment.totalAmount || equipment.quantity * equipment.amount}
-                className="border-purple-200 focus-visible:ring-purple-500 bg-purple-50"
-                readOnly
+              <FormField
+                control={form.control}
+                name="propertyNo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Property No.</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter property number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <p className="text-xs text-muted-foreground">
-                Calculated from Quantity × Amount
-              </p>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="Enter quantity" 
+                        {...field}
+                        onChange={e => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="pc, set, etc." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={onClose} className="border-purple-200 hover:bg-purple-50 hover:text-purple-700">
-              Cancel
-            </Button>
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">Save Equipment</Button>
-          </DialogFooter>
-        </form>
+
+            {/* Conditional fields based on equipment type */}
+            {form.watch("type") === "Inventory" && (
+              <div className="space-y-4 border-t border-gray-200 pt-4">
+                <h3 className="text-sm font-medium text-gray-700 mt-2">Inventory Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="inventoryItemNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Inventory Item No.</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter inventory item no." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="estimatedUsefulLife"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Estimated Useful Life</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter useful life" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="totalAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Total Amount</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter total amount" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="risNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>RIS No.</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter RIS No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="icsNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>ICS No.</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter ICS No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="parNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>PAR No.</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter PAR No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="dateAcquired"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Date Acquired</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Amount</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter amount" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} className="mr-2">Cancel</Button>
+              <Button type="submit" className="bg-purple-600 hover:bg-purple-700">Add Equipment</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default AddEquipmentDialog;

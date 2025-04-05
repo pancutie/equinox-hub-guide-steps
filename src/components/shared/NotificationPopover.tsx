@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToast } from '@/hooks/use-toast';
 
 // Mock notifications data
 const initialNotifications = [
@@ -20,11 +21,16 @@ const initialNotifications = [
 const NotificationPopover = () => {
   const [notifications, setNotifications] = useState(initialNotifications);
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
   
   const unreadCount = notifications.filter(notification => !notification.read).length;
   
   const handleMarkAllAsRead = () => {
     setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+    toast({
+      title: "All notifications marked as read",
+      description: "You have no unread notifications",
+    });
   };
   
   const handleMarkAsRead = (id: number) => {
@@ -36,18 +42,29 @@ const NotificationPopover = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative border-purple-200 hover:bg-purple-50 hover:text-purple-700">
-          <Bell size={18} />
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="relative border-purple-200 hover:bg-purple-50 hover:text-purple-700 transition-all duration-200"
+        >
+          <Bell size={18} className={unreadCount > 0 ? "animate-pulse" : ""} />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center border-2 border-white shadow-md">
               {unreadCount}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 rounded-t-md flex justify-between items-center">
-          <h3 className="font-medium">Notifications</h3>
+      <PopoverContent 
+        className="w-80 p-0 border-purple-200 shadow-xl rounded-xl overflow-hidden" 
+        align="end"
+        sideOffset={5}
+      >
+        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 flex justify-between items-center">
+          <h3 className="font-medium flex items-center gap-2">
+            <Bell size={16} className="text-purple-200" />
+            Notifications
+          </h3>
           {unreadCount > 0 && (
             <Button 
               variant="ghost" 
@@ -59,32 +76,33 @@ const NotificationPopover = () => {
             </Button>
           )}
         </div>
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-80 overflow-y-auto bg-gradient-to-b from-white to-purple-50">
           {notifications.length > 0 ? (
-            notifications.map(notification => (
+            notifications.map((notification) => (
               <div 
                 key={notification.id}
-                className={`p-3 border-b last:border-0 hover:bg-purple-50 transition-colors ${notification.read ? 'bg-white' : 'bg-purple-50'}`}
+                className={`p-3 border-b border-purple-100 last:border-0 hover:bg-purple-50 transition-colors cursor-pointer ${notification.read ? 'bg-white' : 'bg-purple-50'}`}
                 onClick={() => handleMarkAsRead(notification.id)}
               >
                 <div className="flex justify-between">
-                  <p className={`text-sm mb-1 ${notification.read ? 'font-normal' : 'font-medium'}`}>
+                  <p className={`text-sm mb-1 ${notification.read ? 'font-normal text-gray-700' : 'font-medium text-purple-800'}`}>
                     {notification.message}
                   </p>
                   {!notification.read && (
-                    <span className="h-2 w-2 bg-purple-500 rounded-full"></span>
+                    <span className="h-2 w-2 bg-purple-500 rounded-full animate-pulse"></span>
                   )}
                 </div>
                 <p className="text-xs text-gray-500">{notification.time}</p>
               </div>
             ))
           ) : (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-6 text-center text-gray-500">
+              <Bell size={24} className="mx-auto mb-2 text-gray-300" />
               No notifications
             </div>
           )}
         </div>
-        <div className="p-2 border-t bg-purple-50">
+        <div className="p-2 border-t border-purple-100 bg-purple-50">
           <Button 
             variant="ghost" 
             size="sm" 

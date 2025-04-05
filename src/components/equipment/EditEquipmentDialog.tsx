@@ -1,4 +1,7 @@
 
+// Import statements kept the same, but fix the Equipment import
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,215 +10,161 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
-import { Equipment } from "@/pages/EquipmentPage";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Pencil } from "lucide-react";
+import { Equipment } from "@/components/equipment/AddEquipmentDialog";
+
+const formSchema = z.object({
+  propertyNo: z.string().min(1, "Property number is required"),
+  description: z.string().min(1, "Description is required"),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  unit: z.string().min(1, "Unit is required"),
+});
 
 interface EditEquipmentDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (equipment: Equipment) => void;
   equipment: Equipment;
+  onUpdateEquipment: (equipment: Equipment) => void;
 }
 
-export default function EditEquipmentDialog({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  equipment: initialEquipment 
-}: EditEquipmentDialogProps) {
-  const [equipment, setEquipment] = useState<Equipment>(initialEquipment);
+const EditEquipmentDialog = ({ equipment, onUpdateEquipment }: EditEquipmentDialogProps) => {
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
 
-  // Update local state when equipment prop changes
-  useEffect(() => {
-    setEquipment(initialEquipment);
-  }, [initialEquipment]);
+  // Use form from react-hook-form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      propertyNo: equipment.propertyNo,
+      description: equipment.description,
+      quantity: equipment.quantity,
+      unit: equipment.unit,
+    },
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === "quantity" || name === "amount") {
-      const numValue = parseInt(value) || 0;
-      setEquipment(prev => ({
-        ...prev,
-        [name]: numValue,
-        // Update totalAmount when quantity or amount changes
-        ...(name === "quantity" ? { totalAmount: numValue * prev.amount } : 
-           name === "amount" ? { totalAmount: numValue * prev.quantity } : {})
-      }));
-    } else {
-      setEquipment(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
+  // Form submission handler
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Update the equipment with the new values
+    const updatedEquipment = {
+      ...equipment,
+      propertyNo: values.propertyNo,
+      description: values.description,
+      quantity: values.quantity,
+      unit: values.unit,
+    };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(equipment);
+    // Update the equipment
+    onUpdateEquipment(updatedEquipment);
+
+    // Show success message
+    toast({
+      title: "Equipment Updated",
+      description: `${values.description} has been updated successfully.`,
+    });
+
+    // Close the dialog
+    setOpen(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px] bg-white border-purple-200 shadow-lg">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-purple-700 text-xl font-bold">Edit Equipment</DialogTitle>
-            <DialogDescription>
-              Update the equipment details. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 mt-4">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Pencil className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit Equipment</DialogTitle>
+          <DialogDescription>Make changes to the equipment details.</DialogDescription>
+        </DialogHeader>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+            <FormField
+              control={form.control}
+              name="propertyNo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property No.</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter property number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="propertyNo">Property No.</Label>
-                  <Input
-                    id="propertyNo"
-                    name="propertyNo"
-                    value={equipment.propertyNo}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    name="description"
-                    value={equipment.description}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    min="1"
-                    value={equipment.quantity}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="unit">Unit</Label>
-                  <Input
-                    id="unit"
-                    name="unit"
-                    value={equipment.unit}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="dateAcquired">Date Acquired</Label>
-                  <Input
-                    id="dateAcquired"
-                    name="dateAcquired"
-                    type="date"
-                    value={equipment.dateAcquired}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="amount">Amount (₱)</Label>
-                  <Input
-                    id="amount"
-                    name="amount"
-                    type="number"
-                    min="0"
-                    value={equipment.amount}
-                    onChange={handleChange}
-                    required
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="inventoryItemNo">Inventory Item No.</Label>
-                  <Input
-                    id="inventoryItemNo"
-                    name="inventoryItemNo"
-                    value={equipment.inventoryItemNo || ''}
-                    onChange={handleChange}
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="estimatedUsefulLife">Estimated Useful Life</Label>
-                  <Input
-                    id="estimatedUsefulLife"
-                    name="estimatedUsefulLife"
-                    value={equipment.estimatedUsefulLife || ''}
-                    onChange={handleChange}
-                    placeholder="e.g., 5 years"
-                    className="border-purple-200 focus-visible:ring-purple-500"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="totalAmount">Total Amount (₱)</Label>
-              <Input
-                id="totalAmount"
-                name="totalAmount"
-                type="number"
-                min="0"
-                value={equipment.totalAmount || equipment.quantity * equipment.amount}
-                className="border-purple-200 focus-visible:ring-purple-500 bg-purple-50"
-                readOnly
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="Enter quantity" 
+                        {...field}
+                        onChange={e => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <p className="text-xs text-muted-foreground">
-                Calculated from Quantity × Amount
-              </p>
+              
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="pc, set, etc." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select
-                id="status"
-                name="status"
-                value={equipment.status}
-                onChange={handleChange}
-                className="w-full border border-purple-200 focus-visible:ring-purple-500 rounded-md h-10 px-3 py-2 text-sm"
-                required
-              >
-                <option value="Available">Available</option>
-                <option value="Borrowed">Borrowed</option>
-              </select>
-            </div>
-          </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={onClose} className="border-purple-200 hover:bg-purple-50 hover:text-purple-700">
-              Cancel
-            </Button>
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">Save Changes</Button>
-          </DialogFooter>
-        </form>
+
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} className="mr-2">Cancel</Button>
+              <Button type="submit" className="bg-purple-600 hover:bg-purple-700">Update Equipment</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default EditEquipmentDialog;
