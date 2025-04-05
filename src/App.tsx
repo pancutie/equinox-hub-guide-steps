@@ -26,6 +26,7 @@ import ExtensionProjectsPage from "./pages/projects/ExtensionProjectsPage";
 import ResearchActivitiesPage from "./pages/projects/ResearchActivitiesPage";
 import ExtensionActivitiesPage from "./pages/projects/ExtensionActivitiesPage";
 import YearDetailsPage from "./pages/projects/YearDetailsPage";
+import UsersPage from "./pages/UsersPage";
 
 const queryClient = new QueryClient();
 
@@ -162,6 +163,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <OverdueEquipmentPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Users Route */}
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <UsersPage />
               </ProtectedRoute>
             }
           />
