@@ -1,4 +1,3 @@
-
 import MainLayout from "@/components/layout/MainLayout";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import { Book, Check, Database, AlertTriangle, BookOpen, Users, BarChart, Clipboard } from "lucide-react";
@@ -36,9 +35,7 @@ const mockData = {
   overdueEquipmentPAR: 2,
   totalBooks: 181,
   totalEquipmentICS: 63,
-  totalEquipmentPAR: 32,
-  totalRegisteredUsers: 152,
-  totalBorrowers: 78
+  totalEquipmentPAR: 32
 };
 
 // Monthly borrowing data for chart
@@ -93,7 +90,7 @@ const recentActivities = [
 ];
 
 // User/borrower data
-const borrowers = [
+export const borrowers = [
   { id: 1, name: "Juan Dela Cruz", role: "Student", borrowed: 3, overdue: 1 },
   { id: 2, name: "Maria Santos", role: "Faculty", borrowed: 5, overdue: 0 },
   { id: 3, name: "Carlos Tan", role: "Student", borrowed: 2, overdue: 2 },
@@ -101,8 +98,8 @@ const borrowers = [
   { id: 5, name: "Sofia Lim", role: "Student", borrowed: 4, overdue: 1 },
 ];
 
-// Calculate the sum of total registered users properly
-const totalRegisteredUsers = mockData.totalRegisteredUsers;
+// Calculate the total number of registered users correctly from the borrowers list
+const totalRegisteredUsers = borrowers.length;
 
 const Index = () => {
   const navigate = useNavigate();
@@ -148,7 +145,7 @@ const Index = () => {
           
           <DashboardCard
             title="Registered Users"
-            count={totalRegisteredUsers} 
+            count={totalRegisteredUsers}
             icon={<Users size={20} />}
             linkTo="/users"
             bgColor="bg-gradient-to-br from-violet-500 to-violet-600"
@@ -456,7 +453,7 @@ const Index = () => {
 
           <Card className="bg-white shadow-md border border-purple-100 hover:shadow-lg transition-all duration-300">
             <CardHeader className="border-b border-purple-100 pb-3">
-              <CardTitle className="text-purple-700 text-lg">Recent Borrowers</CardTitle>
+              <CardTitle className="text-purple-700 text-lg">Registered Users</CardTitle>
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-1">

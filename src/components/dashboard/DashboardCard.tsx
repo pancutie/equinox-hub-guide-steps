@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 interface DashboardCardProps {
   title: string;
-  count: number;
+  count: number | string;
   icon: React.ReactNode;
   linkTo: string;
   bgColor?: string;
@@ -42,7 +42,9 @@ const DashboardCard = ({
           </div>
         </CardHeader>
         <CardContent className="py-2">
-          <p className={`text-2xl font-bold ${textColor} transform transition-all duration-300 group-hover:scale-110`}>{count.toLocaleString()}</p>
+          <p className={`text-2xl font-bold ${textColor} transform transition-all duration-300 group-hover:scale-110`}>
+            {typeof count === 'number' ? count.toLocaleString() : count}
+          </p>
         </CardContent>
         <CardFooter className="pt-0 pb-3">
           <p className={`text-xs ${textColor} opacity-80 group-hover:opacity-100 transition-opacity duration-300`}>Click to view details</p>
