@@ -3,7 +3,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Book, Check, AlertTriangle, Database } from "lucide-react";
+import { Book, Check, AlertTriangle, Database, Clipboard } from "lucide-react";
 
 const ReportsPage = () => {
   const navigate = useNavigate();
@@ -31,25 +31,46 @@ const ReportsPage = () => {
       color: "text-red-600"
     },
     {
-      title: "Available Equipment",
-      description: "View all equipment that are currently available for borrowing",
+      title: "Available Equipment ICS",
+      description: "View all ICS equipment that are currently available for borrowing",
       icon: <Database size={20} />,
-      path: "/reports/available-equipment",
+      path: "/reports/available-equipment-ics",
       color: "text-purple-600"
     },
     {
-      title: "Borrowed Equipment",
-      description: "View all equipment that are currently borrowed by students",
+      title: "Borrowed Equipment ICS",
+      description: "View all ICS equipment that are currently borrowed by students",
       icon: <Check size={20} />,
-      path: "/reports/borrowed-equipment",
+      path: "/reports/borrowed-equipment-ics",
       color: "text-teal-600"
     },
     {
-      title: "Overdue Equipment",
-      description: "View all equipment that are overdue for return",
+      title: "Overdue Equipment ICS",
+      description: "View all ICS equipment that are overdue for return",
       icon: <AlertTriangle size={20} />,
-      path: "/reports/overdue-equipment",
+      path: "/reports/overdue-equipment-ics",
       color: "text-orange-600"
+    },
+    {
+      title: "Available Equipment PAR",
+      description: "View all PAR equipment that are currently available for borrowing",
+      icon: <Clipboard size={20} />,
+      path: "/reports/available-equipment-par",
+      color: "text-indigo-600"
+    },
+    {
+      title: "Borrowed Equipment PAR",
+      description: "View all PAR equipment that are currently borrowed by students",
+      icon: <Check size={20} />,
+      path: "/reports/borrowed-equipment-par",
+      color: "text-emerald-600"
+    },
+    {
+      title: "Overdue Equipment PAR",
+      description: "View all PAR equipment that are overdue for return",
+      icon: <AlertTriangle size={20} />,
+      path: "/reports/overdue-equipment-par",
+      color: "text-rose-600"
     }
   ];
 
