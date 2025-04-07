@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -8,22 +8,60 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from '@/hooks/use-toast';
+import { overdueBooks, overdueEquipment } from '@/pages/Index';
 
-// Mock notifications data
-const initialNotifications = [
-  { id: 1, message: "New equipment added to inventory", time: "2 minutes ago", read: false },
-  { id: 2, message: "Equipment 'Projector' is due for maintenance", time: "1 hour ago", read: false },
-  { id: 3, message: "Low stock alert: Laptops (only 2 remaining)", time: "3 hours ago", read: false },
-  { id: 4, message: "Overdue return: 3D Printer", time: "1 day ago", read: true },
-  { id: 5, message: "System maintenance scheduled for tonight", time: "2 days ago", read: true },
-];
+// Combine notifications from different sources
+const generateSystemNotifications = () => {
+  const notifications = [];
+  
+  // Add notifications for overdue books
+  overdueBooks.forEach(book => {
+    notifications.push({
+      id: `book-${book.id}`,
+      message: `Overdue book: "${book.title}" by ${book.borrower}`,
+      time: `${book.daysOverdue} days overdue`,
+      read: false,
+      type: 'overdue-book'
+    });
+  });
+  
+  // Add notifications for overdue equipment
+  overdueEquipment.forEach(equipment => {
+    notifications.push({
+      id: `equipment-${equipment.id}`,
+      message: `Overdue equipment: "${equipment.description}" by ${equipment.borrower}`,
+      time: `${equipment.daysOverdue} days overdue`,
+      read: false,
+      type: 'overdue-equipment'
+    });
+  });
+  
+  // Add example system notifications
+  const sysNotifications = [
+    { id: "sys-1", message: "New equipment added to inventory", time: "2 minutes ago", read: false, type: 'system' },
+    { id: "sys-2", message: "Equipment 'Projector' is due for maintenance", time: "1 hour ago", read: false, type: 'system' },
+    { id: "sys-3", message: "Low stock alert: Laptops (only 2 remaining)", time: "3 hours ago", read: false, type: 'system' },
+    { id: "sys-4", message: "System maintenance scheduled for tonight", time: "2 days ago", read: true, type: 'system' },
+  ];
+  
+  return [...notifications, ...sysNotifications];
+};
 
 const NotificationPopover = () => {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState(() => generateSystemNotifications());
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   
   const unreadCount = notifications.filter(notification => !notification.read).length;
+  
+  // Play notification sound when new notifications are added
+  useEffect(() => {
+    if (unreadCount > 0) {
+      const audio = new Audio('/notification.mp3');
+      audio.volume = 0.3;
+      audio.play().catch(e => console.log('Audio play failed:', e));
+    }
+  }, []);
   
   const handleMarkAllAsRead = () => {
     setNotifications(notifications.map(notification => ({ ...notification, read: true })));
@@ -33,10 +71,21 @@ const NotificationPopover = () => {
     });
   };
   
-  const handleMarkAsRead = (id: number) => {
+  const handleMarkAsRead = (id: string) => {
     setNotifications(notifications.map(notification => 
       notification.id === id ? { ...notification, read: true } : notification
     ));
+  };
+  
+  const handleNotificationClick = (notification: any) => {
+    handleMarkAsRead(notification.id);
+    
+    // Navigate to appropriate page based on notification type
+    if (notification.type === 'overdue-book') {
+      window.location.href = '/reports/overdue-books';
+    } else if (notification.type === 'overdue-equipment') {
+      window.location.href = '/reports/overdue-equipment';
+    }
   };
 
   return (
@@ -63,7 +112,7 @@ const NotificationPopover = () => {
         <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 flex justify-between items-center">
           <h3 className="font-medium flex items-center gap-2">
             <Bell size={16} className="text-purple-200" />
-            Notifications
+            Notifications {unreadCount > 0 && `(${unreadCount})`}
           </h3>
           {unreadCount > 0 && (
             <Button 
@@ -81,8 +130,13 @@ const NotificationPopover = () => {
             notifications.map((notification) => (
               <div 
                 key={notification.id}
-                className={`p-3 border-b border-purple-100 last:border-0 hover:bg-purple-50 transition-colors cursor-pointer ${notification.read ? 'bg-white' : 'bg-purple-50'}`}
-                onClick={() => handleMarkAsRead(notification.id)}
+                className={`p-3 border-b border-purple-100 last:border-0 hover:bg-purple-50 transition-colors cursor-pointer ${
+                  notification.read ? 'bg-white' : 'bg-purple-50'
+                } ${
+                  (notification.type === 'overdue-book' || notification.type === 'overdue-equipment') ? 
+                  'border-l-2 border-l-red-500' : ''
+                }`}
+                onClick={() => handleNotificationClick(notification)}
               >
                 <div className="flex justify-between">
                   <p className={`text-sm mb-1 ${notification.read ? 'font-normal text-gray-700' : 'font-medium text-purple-800'}`}>

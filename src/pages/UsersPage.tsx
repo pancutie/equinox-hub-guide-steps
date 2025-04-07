@@ -21,15 +21,64 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, UserPlus } from "lucide-react";
+import { Search, UserPlus, Eye, Edit, Trash2, MessageSquare } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import AddUserDialog from "@/components/users/AddUserDialog";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [usersList, setUsersList] = useState(borrowers);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
+  const { toast } = useToast();
   
-  const filteredUsers = borrowers.filter(user => 
+  const filteredUsers = usersList.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddUser = (newUser: any) => {
+    setUsersList([...usersList, newUser]);
+    setIsAddDialogOpen(false);
+    
+    // Play a soft notification sound
+    const audio = new Audio('/notification.mp3');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  };
+  
+  const confirmDelete = (userId: number) => {
+    setDeleteUserId(userId);
+  };
+  
+  const handleDelete = () => {
+    if (deleteUserId) {
+      const userToDelete = usersList.find(user => user.id === deleteUserId);
+      setUsersList(usersList.filter(user => user.id !== deleteUserId));
+      toast({
+        title: "User deleted",
+        description: `${userToDelete?.name} has been removed from the system.`,
+      });
+      setDeleteUserId(null);
+    }
+  };
+  
+  const handleSendReminder = (userName: string) => {
+    toast({
+      title: "Reminder sent",
+      description: `A reminder has been sent to ${userName}.`,
+    });
+  };
   
   return (
     <MainLayout>
@@ -43,7 +92,10 @@ const UsersPage = () => {
                   Manage all registered users in the system
                 </CardDescription>
               </div>
-              <Button className="bg-purple-700 hover:bg-purple-800">
+              <Button 
+                className="bg-purple-700 hover:bg-purple-800"
+                onClick={() => setIsAddDialogOpen(true)}
+              >
                 <UserPlus className="mr-2 h-4 w-4" /> Add New User
               </Button>
             </div>
@@ -80,7 +132,9 @@ const UsersPage = () => {
                       <Badge 
                         className={user.role === "Faculty" 
                           ? "bg-blue-100 text-blue-800 hover:bg-blue-200" 
-                          : "bg-green-100 text-green-800 hover:bg-green-200"}
+                          : user.role === "Staff"
+                            ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                            : "bg-green-100 text-green-800 hover:bg-green-200"}
                       >
                         {user.role}
                       </Badge>
@@ -95,8 +149,30 @@ const UsersPage = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm">View</Button>
-                        <Button variant="outline" size="sm" className="border-purple-200 text-purple-700 hover:bg-purple-50">Edit</Button>
+                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-purple-200 text-purple-700 hover:bg-purple-50">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {user.overdue > 0 && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 w-8 p-0 border-amber-200 text-amber-700 hover:bg-amber-50"
+                            onClick={() => handleSendReminder(user.name)}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 w-8 p-0 border-red-200 text-red-700 hover:bg-red-50"
+                          onClick={() => confirmDelete(user.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -106,6 +182,32 @@ const UsersPage = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Add User Dialog */}
+      <AddUserDialog 
+        isOpen={isAddDialogOpen} 
+        onClose={() => setIsAddDialogOpen(false)} 
+        onSuccess={handleAddUser}
+      />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteUserId !== null} onOpenChange={(open) => !open && setDeleteUserId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the user
+              and remove their data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 };
