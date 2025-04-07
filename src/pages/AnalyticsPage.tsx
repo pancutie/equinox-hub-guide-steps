@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { BookOpen, Database, Clipboard, Users, BookMarked } from "lucide-react";
+import { BookOpen, Database, Clipboard, Users, BookMarked, GraduationCap, Award } from "lucide-react";
 
 const AnalyticsPage = () => {
   const [activeTab, setActiveTab] = useState("books");
