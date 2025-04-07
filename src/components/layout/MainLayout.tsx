@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,6 +14,8 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarProvider as SidebarContextProvider,
+  SidebarTrigger as SidebarTriggerButton,
 } from "@/components/ui/sidebar";
 import { 
   Book, 
@@ -34,7 +35,8 @@ import {
   FileText,
   CheckCircle,
   AlertTriangle,
-  Moon
+  Moon,
+  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +46,9 @@ import { useTheme } from "@/hooks/use-theme";
 interface MainLayoutProps {
   children: React.ReactNode;
 }
+
+const SidebarProvider = SidebarContextProvider;
+const SidebarTrigger = SidebarTriggerButton;
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const navigate = useNavigate();
@@ -173,92 +178,109 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                       <SidebarMenuSub className="bg-gradient-to-r from-purple-950 to-indigo-950 dark:from-gray-950 dark:to-gray-900">
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
-                            isActive={activeItem === '/reports/available-books'}
-                            onClick={() => handleNavigation('/reports/available-books')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white font-semibold"
                           >
                             <BookOpen size={14} />
-                            <span>Available Books</span>
+                            <span>Books</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            isActive={activeItem === '/reports/available-books'}
+                            onClick={() => handleNavigation('/reports/available-books')}
+                            className="text-white/80 hover:text-white pl-6"
+                          >
+                            <span>Available</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/borrowed-books'}
                             onClick={() => handleNavigation('/reports/borrowed-books')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <CheckCircle size={14} />
-                            <span>Borrowed Books</span>
+                            <span>Borrowed</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/overdue-books'}
                             onClick={() => handleNavigation('/reports/overdue-books')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <AlertTriangle size={14} />
-                            <span>Overdue Books</span>
+                            <span>Overdue</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            className="text-white/80 hover:text-white font-semibold mt-2"
+                          >
+                            <Database size={14} />
+                            <span>Equipment/ICS</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/available-equipment-ics'}
                             onClick={() => handleNavigation('/reports/available-equipment-ics')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <Database size={14} />
-                            <span>Available ICS</span>
+                            <span>Available</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/borrowed-equipment-ics'}
                             onClick={() => handleNavigation('/reports/borrowed-equipment-ics')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <CheckCircle size={14} />
-                            <span>Borrowed ICS</span>
+                            <span>Borrowed</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/overdue-equipment-ics'}
                             onClick={() => handleNavigation('/reports/overdue-equipment-ics')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <AlertTriangle size={14} />
-                            <span>Overdue ICS</span>
+                            <span>Overdue</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            className="text-white/80 hover:text-white font-semibold mt-2"
+                          >
+                            <Clipboard size={14} />
+                            <span>Equipment/PAR</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/available-equipment-par'}
                             onClick={() => handleNavigation('/reports/available-equipment-par')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <Clipboard size={14} />
-                            <span>Available PAR</span>
+                            <span>Available</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/borrowed-equipment-par'}
                             onClick={() => handleNavigation('/reports/borrowed-equipment-par')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <CheckCircle size={14} />
-                            <span>Borrowed PAR</span>
+                            <span>Borrowed</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             isActive={activeItem === '/reports/overdue-equipment-par'}
                             onClick={() => handleNavigation('/reports/overdue-equipment-par')}
-                            className="text-white/80 hover:text-white"
+                            className="text-white/80 hover:text-white pl-6"
                           >
-                            <AlertTriangle size={14} />
-                            <span>Overdue PAR</span>
+                            <span>Overdue</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>
@@ -361,8 +383,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                       onClick={toggleTheme}
                       className="hover:bg-white/10 text-white hover:text-white transition-colors duration-300"
                     >
-                      <Moon className="text-white/70" />
-                      <span>Toggle Theme</span>
+                      {theme === 'dark' ? (
+                        <Sun className="text-white/70" />
+                      ) : (
+                        <Moon className="text-white/70" />
+                      )}
+                      <span>Toggle Theme ({theme === 'dark' ? 'Light' : 'Dark'})</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -395,7 +421,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               </div>
               <div className="flex items-center gap-3">
                 <BellRing className="text-purple-500 dark:text-blue-400 h-5 w-5" />
-                <div className="bg-purple-700 dark:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">Admin</div>
               </div>
             </div>
           </div>
@@ -473,4 +498,3 @@ function getPageTitle(path: string): string {
 }
 
 export default MainLayout;
-

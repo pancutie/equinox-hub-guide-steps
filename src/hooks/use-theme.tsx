@@ -14,20 +14,40 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState(() => {
+    // Check localStorage first
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme');
-      return savedTheme || 'light';
+      
+      // If theme is saved in localStorage, use it
+      if (savedTheme) {
+        return savedTheme;
+      }
+      
+      // If no saved theme, check user system preferences
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
     }
+    
+    // Default to light theme
     return 'light';
   });
 
   useEffect(() => {
+    // Apply theme class to document element
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
     } else {
+      document.documentElement.classList.add('light');
       document.documentElement.classList.remove('dark');
     }
+    
+    // Save theme preference to localStorage
     localStorage.setItem('theme', theme);
+    
+    // Log theme change for debugging
+    console.log('Theme changed to:', theme);
   }, [theme]);
 
   return (

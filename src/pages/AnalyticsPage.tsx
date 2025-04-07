@@ -1,261 +1,505 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
-// Sample data - replace with actual data in production
-const bookData = [
-  { name: 'Jan', borrowed: 65, overdue: 12, returned: 53 },
-  { name: 'Feb', borrowed: 45, overdue: 8, returned: 37 },
-  { name: 'Mar', borrowed: 58, overdue: 10, returned: 48 },
-  { name: 'Apr', borrowed: 70, overdue: 15, returned: 55 },
-  { name: 'May', borrowed: 63, overdue: 9, returned: 54 },
-  { name: 'Jun', borrowed: 55, overdue: 11, returned: 44 }
-];
-
-const equipmentData = [
-  { name: 'Jan', borrowed: 45, overdue: 8, returned: 37 },
-  { name: 'Feb', borrowed: 38, overdue: 5, returned: 33 },
-  { name: 'Mar', borrowed: 42, overdue: 7, returned: 35 },
-  { name: 'Apr', borrowed: 50, overdue: 10, returned: 40 },
-  { name: 'May', borrowed: 48, overdue: 6, returned: 42 },
-  { name: 'Jun', borrowed: 52, overdue: 9, returned: 43 }
-];
-
-const projectStatusData = [
-  { name: 'Completed', value: 35, color: '#10b981' },
-  { name: 'In Progress', value: 45, color: '#3b82f6' },
-  { name: 'Planning', value: 20, color: '#8b5cf6' }
-];
-
-const researchData = [
-  { year: '2020', completed: 12, ongoing: 5 },
-  { year: '2021', completed: 15, ongoing: 7 },
-  { year: '2022', completed: 18, ongoing: 9 },
-  { year: '2023', completed: 22, ongoing: 12 },
-  { year: '2024', completed: 14, ongoing: 18 }
-];
-
-const extensionData = [
-  { year: '2020', completed: 10, ongoing: 4 },
-  { year: '2021', completed: 12, ongoing: 5 },
-  { year: '2022', completed: 15, ongoing: 6 },
-  { year: '2023', completed: 18, ongoing: 8 },
-  { year: '2024', completed: 11, ongoing: 14 }
-];
+import { BookOpen, Database, Clipboard, Users, BookMarked } from "lucide-react";
 
 const AnalyticsPage = () => {
   const [activeTab, setActiveTab] = useState("books");
-  
-  const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f43f5e', '#f97316'];
+
+  // Mock data for books analytics
+  const bookData = [
+    { name: 'Jan', borrowed: 45, returned: 30, overdue: 15 },
+    { name: 'Feb', borrowed: 52, returned: 45, overdue: 7 },
+    { name: 'Mar', borrowed: 38, returned: 20, overdue: 18 },
+    { name: 'Apr', borrowed: 65, returned: 58, overdue: 7 },
+    { name: 'May', borrowed: 48, returned: 40, overdue: 8 },
+    { name: 'Jun', borrowed: 55, returned: 45, overdue: 10 },
+  ];
+
+  const bookCategoryData = [
+    { name: 'Computer Science', value: 45, color: '#8884d8' },
+    { name: 'Engineering', value: 30, color: '#82ca9d' },
+    { name: 'Mathematics', value: 15, color: '#ffc658' },
+    { name: 'Physics', value: 25, color: '#ff8042' },
+    { name: 'Chemistry', value: 18, color: '#0088FE' },
+  ];
+
+  // Mock data for equipment ICS analytics
+  const equipmentICSData = [
+    { name: 'Jan', borrowed: 20, returned: 15, overdue: 5 },
+    { name: 'Feb', borrowed: 25, returned: 20, overdue: 5 },
+    { name: 'Mar', borrowed: 30, returned: 28, overdue: 2 },
+    { name: 'Apr', borrowed: 22, returned: 18, overdue: 4 },
+    { name: 'May', borrowed: 28, returned: 25, overdue: 3 },
+    { name: 'Jun', borrowed: 32, returned: 30, overdue: 2 },
+  ];
+
+  const equipmentICSCategoryData = [
+    { name: 'Computers', value: 35, color: '#8884d8' },
+    { name: 'Lab Equipment', value: 25, color: '#82ca9d' },
+    { name: 'Audio/Visual', value: 20, color: '#ffc658' },
+    { name: 'Electronics', value: 15, color: '#ff8042' },
+    { name: 'Others', value: 5, color: '#0088FE' },
+  ];
+
+  // Mock data for equipment PAR analytics
+  const equipmentPARData = [
+    { name: 'Jan', borrowed: 15, returned: 12, overdue: 3 },
+    { name: 'Feb', borrowed: 18, returned: 15, overdue: 3 },
+    { name: 'Mar', borrowed: 22, returned: 20, overdue: 2 },
+    { name: 'Apr', borrowed: 16, returned: 14, overdue: 2 },
+    { name: 'May', borrowed: 20, returned: 18, overdue: 2 },
+    { name: 'Jun', borrowed: 25, returned: 22, overdue: 3 },
+  ];
+
+  const equipmentPARCategoryData = [
+    { name: 'Office Equipment', value: 40, color: '#8884d8' },
+    { name: 'Furniture', value: 30, color: '#82ca9d' },
+    { name: 'Fixtures', value: 15, color: '#ffc658' },
+    { name: 'Tools', value: 10, color: '#ff8042' },
+    { name: 'Others', value: 5, color: '#0088FE' },
+  ];
+
+  // Mock data for projects
+  const projectData = [
+    { name: '2020', research: 12, extension: 8 },
+    { name: '2021', research: 15, extension: 10 },
+    { name: '2022', research: 18, extension: 14 },
+    { name: '2023', research: 22, extension: 16 },
+    { name: '2024', research: 25, extension: 20 },
+    { name: '2025', research: 30, extension: 24 },
+  ];
+
+  const projectStatusData = [
+    { name: 'Completed', value: 45, color: '#4CAF50' },
+    { name: 'Ongoing', value: 30, color: '#2196F3' },
+    { name: 'Planned', value: 15, color: '#FFC107' },
+    { name: 'On Hold', value: 10, color: '#FF5722' },
+  ];
   
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-        
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-purple-800 dark:text-blue-400">Analytics Dashboard</h1>
+        </div>
+
         <Tabs defaultValue="books" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6">
-            <TabsTrigger value="books">Books</TabsTrigger>
-            <TabsTrigger value="equipment">Equipment</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsList className="grid grid-cols-4 mb-6">
+            <TabsTrigger value="books" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span>Books</span>
+            </TabsTrigger>
+            <TabsTrigger value="equipmentICS" className="flex items-center gap-2">
+              <Database className="h-4 w-4" />
+              <span>Equipment ICS</span>
+            </TabsTrigger>
+            <TabsTrigger value="equipmentPAR" className="flex items-center gap-2">
+              <Clipboard className="h-4 w-4" />
+              <span>Equipment PAR</span>
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="flex items-center gap-2">
+              <BookMarked className="h-4 w-4" />
+              <span>Projects</span>
+            </TabsTrigger>
           </TabsList>
-          
+
           {/* Books Analytics */}
           <TabsContent value="books" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Book Borrowing Trends</CardTitle>
-                  <CardDescription>Monthly statistics on book borrowing</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={bookData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="borrowed" fill="#8b5cf6" name="Borrowed" />
-                        <Bar dataKey="overdue" fill="#f43f5e" name="Overdue" />
-                        <Bar dataKey="returned" fill="#10b981" name="Returned" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top Borrowed Books</CardTitle>
-                  <CardDescription>Most popular books in the library</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { title: "Introduction to Research", count: 42 },
-                      { title: "Advanced Statistics", count: 38 },
-                      { title: "Research Methodology", count: 35 },
-                      { title: "Data Analysis Techniques", count: 31 },
-                      { title: "Scientific Writing", count: 28 }
-                    ].map((book, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{index + 1}.</span>
-                          <span>{book.title}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-2 py-1 rounded font-medium">
-                            {book.count} times
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          {/* Equipment Analytics */}
-          <TabsContent value="equipment" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Equipment Borrowing Trends</CardTitle>
-                  <CardDescription>Monthly statistics on equipment borrowing</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={equipmentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="borrowed" fill="#3b82f6" name="Borrowed" />
-                        <Bar dataKey="overdue" fill="#f97316" name="Overdue" />
-                        <Bar dataKey="returned" fill="#10b981" name="Returned" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top Borrowed Equipment</CardTitle>
-                  <CardDescription>Most frequently borrowed equipment</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { title: "Projector", count: 35 },
-                      { title: "Laptop", count: 32 },
-                      { title: "Digital Camera", count: 28 },
-                      { title: "Audio Recorder", count: 25 },
-                      { title: "Microphone Set", count: 22 }
-                    ].map((equipment, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{index + 1}.</span>
-                          <span>{equipment.title}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded font-medium">
-                            {equipment.count} times
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          {/* Projects Analytics */}
-          <TabsContent value="projects" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="md:col-span-2">
+              <Card>
                 <CardHeader>
-                  <CardTitle>Research Projects Timeline</CardTitle>
-                  <CardDescription>Annual research project statistics</CardDescription>
+                  <CardTitle className="text-lg">Total Books</CardTitle>
+                  <CardDescription>Books in inventory</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-purple-700 dark:text-blue-400 flex items-center gap-3">
+                    <BookOpen className="h-8 w-8" /> 450
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Currently Borrowed</CardTitle>
+                  <CardDescription>Books out on loan</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-amber-600 flex items-center gap-3">
+                    <Users className="h-8 w-8" /> 78
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Overdue Books</CardTitle>
+                  <CardDescription>Books past due date</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600 flex items-center gap-3">
+                    <BookOpen className="h-8 w-8" /> 23
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Book Transactions Monthly</CardTitle>
+                  <CardDescription>Borrowed, returned, and overdue books</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={researchData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                      <BarChart 
+                        data={bookData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
+                        <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="completed" fill="#8b5cf6" name="Completed" />
-                        <Bar dataKey="ongoing" fill="#3b82f6" name="Ongoing" />
+                        <Bar dataKey="borrowed" fill="#8884d8" name="Borrowed" />
+                        <Bar dataKey="returned" fill="#82ca9d" name="Returned" />
+                        <Bar dataKey="overdue" fill="#ff8042" name="Overdue" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
-                  <CardTitle>Project Status</CardTitle>
-                  <CardDescription>Current status of all projects</CardDescription>
+                  <CardTitle>Book Categories</CardTitle>
+                  <CardDescription>Distribution by subject</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-60">
+                  <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={projectStatusData}
+                          data={bookCategoryData}
                           cx="50%"
                           cy="50%"
-                          labelLine={false}
+                          labelLine={true}
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          nameKey="name"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                         >
-                          {projectStatusData.map((entry, index) => (
+                          {bookCategoryData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
                         <Tooltip />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
             </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Extension Projects Timeline</CardTitle>
-                <CardDescription>Annual extension project statistics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={extensionData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="year" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="completed" fill="#f43f5e" name="Completed" />
-                      <Bar dataKey="ongoing" fill="#f97316" name="Ongoing" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+          </TabsContent>
+
+          {/* Equipment ICS Analytics */}
+          <TabsContent value="equipmentICS" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Total ICS Equipment</CardTitle>
+                  <CardDescription>Equipment in inventory</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-purple-700 dark:text-blue-400 flex items-center gap-3">
+                    <Database className="h-8 w-8" /> 250
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Currently Borrowed</CardTitle>
+                  <CardDescription>Equipment out on loan</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-amber-600 flex items-center gap-3">
+                    <Users className="h-8 w-8" /> 42
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Overdue Equipment</CardTitle>
+                  <CardDescription>Equipment past due date</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600 flex items-center gap-3">
+                    <Database className="h-8 w-8" /> 12
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Equipment ICS Transactions Monthly</CardTitle>
+                  <CardDescription>Borrowed, returned, and overdue equipment</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={equipmentICSData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="borrowed" fill="#8884d8" name="Borrowed" />
+                        <Bar dataKey="returned" fill="#82ca9d" name="Returned" />
+                        <Bar dataKey="overdue" fill="#ff8042" name="Overdue" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Equipment ICS Categories</CardTitle>
+                  <CardDescription>Distribution by type</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={equipmentICSCategoryData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {equipmentICSCategoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Equipment PAR Analytics */}
+          <TabsContent value="equipmentPAR" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Total PAR Equipment</CardTitle>
+                  <CardDescription>Equipment in inventory</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-purple-700 dark:text-blue-400 flex items-center gap-3">
+                    <Clipboard className="h-8 w-8" /> 180
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Currently Borrowed</CardTitle>
+                  <CardDescription>Equipment out on loan</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-amber-600 flex items-center gap-3">
+                    <Users className="h-8 w-8" /> 35
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Overdue Equipment</CardTitle>
+                  <CardDescription>Equipment past due date</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600 flex items-center gap-3">
+                    <Clipboard className="h-8 w-8" /> 8
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Equipment PAR Transactions Monthly</CardTitle>
+                  <CardDescription>Borrowed, returned, and overdue equipment</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={equipmentPARData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="borrowed" fill="#8884d8" name="Borrowed" />
+                        <Bar dataKey="returned" fill="#82ca9d" name="Returned" />
+                        <Bar dataKey="overdue" fill="#ff8042" name="Overdue" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Equipment PAR Categories</CardTitle>
+                  <CardDescription>Distribution by type</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={equipmentPARCategoryData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {equipmentPARCategoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Projects Analytics */}
+          <TabsContent value="projects" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Total Projects</CardTitle>
+                  <CardDescription>All research and extension projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-purple-700 dark:text-blue-400 flex items-center gap-3">
+                    <BookMarked className="h-8 w-8" /> 122
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Research Projects</CardTitle>
+                  <CardDescription>Total research projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-blue-600 flex items-center gap-3">
+                    <GraduationCap className="h-8 w-8" /> 75
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Extension Projects</CardTitle>
+                  <CardDescription>Total extension projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-green-600 flex items-center gap-3">
+                    <Award className="h-8 w-8" /> 47
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Projects Yearly Distribution</CardTitle>
+                  <CardDescription>Research vs Extension projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={projectData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="research" fill="#3b82f6" name="Research" />
+                        <Bar dataKey="extension" fill="#22c55e" name="Extension" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Project Status</CardTitle>
+                  <CardDescription>Status distribution</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={projectStatusData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {projectStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

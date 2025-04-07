@@ -17,14 +17,14 @@ const DashboardNotifications = () => {
       setNotified(true);
       
       // Show subtle Sonner toast notification
-      toast("Outstanding Items Notification", {
-        description: `You have ${overdueBooks.length} overdue books and ${overdueEquipment.length} overdue equipment items.`,
+      toast.info(`You have ${totalOverdueItems} overdue items`, {
+        description: `${overdueBooks.length} books and ${overdueEquipment.length} equipment items are overdue.`,
         action: {
           label: "View Details",
           onClick: () => window.location.href = '/reports/overdue-books',
         },
-        icon: <Bell className="h-5 w-5 text-amber-500" />,
-        duration: 5000, // 5 seconds
+        position: "top-right",
+        duration: 4000,
       });
       
       // Play a soft notification sound
