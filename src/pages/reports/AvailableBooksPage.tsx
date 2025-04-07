@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -42,13 +42,14 @@ const AvailableBooksPage = () => {
           variant="outline" 
           size="icon" 
           onClick={() => navigate('/reports')}
+          className="hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           <ArrowLeft size={18} />
         </Button>
-        <h2 className="text-2xl font-bold">Available Books Report</h2>
+        <h2 className="text-2xl font-bold text-green-700 dark:text-green-500">Available Books Report</h2>
       </div>
       
-      <Card className="mb-6">
+      <Card className="mb-6 border shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
         <CardContent className="pt-6">
           <div className="relative w-full md:w-1/3 mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
@@ -60,10 +61,10 @@ const AvailableBooksPage = () => {
             />
           </div>
           
-          <div className="rounded-md border overflow-hidden">
+          <div className="rounded-md border overflow-hidden shadow-sm dark:border-gray-700">
             <Table>
               <TableCaption>List of all available books</TableCaption>
-              <TableHeader>
+              <TableHeader className="bg-gray-50 dark:bg-gray-900">
                 <TableRow>
                   <TableHead>Book No.</TableHead>
                   <TableHead>Title</TableHead>
@@ -76,19 +77,22 @@ const AvailableBooksPage = () => {
               </TableHeader>
               <TableBody>
                 {filteredBooks.map((book) => (
-                  <TableRow key={book.id}>
+                  <TableRow key={book.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
                     <TableCell className="font-medium">{book.bookNo}</TableCell>
                     <TableCell>{book.title}</TableCell>
                     <TableCell>{book.author}</TableCell>
                     <TableCell>{book.location}</TableCell>
                     <TableCell>{book.year}</TableCell>
                     <TableCell>
-                      <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                      <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                         Available
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm">Borrow</Button>
+                      <Button variant="outline" size="sm" className="flex items-center gap-1">
+                        <Plus size={14} />
+                        Borrow
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

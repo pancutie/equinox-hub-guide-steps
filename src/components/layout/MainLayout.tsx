@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -29,18 +30,15 @@ import {
   Clipboard,
   Presentation,
   GraduationCap,
-  Sparkles,
   Award,
+  Sparkles,
   BellRing,
   FileText,
-  CheckCircle,
-  AlertTriangle,
   Moon,
   Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTheme } from "@/hooks/use-theme";
 
 interface MainLayoutProps {
@@ -176,6 +174,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     
                     {activeItem.startsWith('/reports') && (
                       <SidebarMenuSub className="bg-gradient-to-r from-purple-950 to-indigo-950 dark:from-gray-950 dark:to-gray-900">
+                        {/* Books section */}
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             className="text-white/80 hover:text-white font-semibold"
@@ -212,6 +211,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         
+                        {/* ICS Equipment section */}
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             className="text-white/80 hover:text-white font-semibold mt-2"
@@ -248,6 +248,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         
+                        {/* PAR Equipment section */}
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             className="text-white/80 hover:text-white font-semibold mt-2"
@@ -424,7 +425,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               </div>
             </div>
           </div>
-          <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-gray-50 to-purple-50/30 dark:from-gray-900 dark:to-gray-800">{children}</main>
+          <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-gray-50 to-purple-50/30 dark:from-gray-900 dark:to-gray-800">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarProvider>

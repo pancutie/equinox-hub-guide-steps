@@ -9,6 +9,7 @@ const ReportsPage = () => {
   const navigate = useNavigate();
 
   const reportCards = [
+    // Books Reports
     {
       title: "Available Books",
       description: "View all books that are currently available for borrowing",
@@ -30,6 +31,8 @@ const ReportsPage = () => {
       path: "/reports/overdue-books",
       color: "text-red-600"
     },
+    
+    // Equipment ICS Reports
     {
       title: "Available Equipment ICS",
       description: "View all ICS equipment that are currently available for borrowing",
@@ -51,6 +54,8 @@ const ReportsPage = () => {
       path: "/reports/overdue-equipment-ics",
       color: "text-orange-600"
     },
+    
+    // Equipment PAR Reports
     {
       title: "Available Equipment PAR",
       description: "View all PAR equipment that are currently available for borrowing",
@@ -78,9 +83,9 @@ const ReportsPage = () => {
     <MainLayout>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {reportCards.map((card, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow">
+          <Card key={index} className="hover:shadow-md transition-shadow dark:border-gray-700">
             <CardHeader>
-              <div className={`${card.color} mb-2`}>{card.icon}</div>
+              <div className={`${card.color} mb-2 dark:opacity-90`}>{card.icon}</div>
               <CardTitle>{card.title}</CardTitle>
               <CardDescription>{card.description}</CardDescription>
             </CardHeader>

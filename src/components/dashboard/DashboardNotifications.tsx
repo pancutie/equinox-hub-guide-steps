@@ -1,13 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { overdueBooks, overdueEquipment } from '@/pages/Index';
-import { useToast } from "@/hooks/use-toast";
 import { Bell } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardNotifications = () => {
   const [notified, setNotified] = useState(false);
-  const { toast: uiToast } = useToast();
   
   const totalOverdueItems = overdueBooks.length + overdueEquipment.length;
   
