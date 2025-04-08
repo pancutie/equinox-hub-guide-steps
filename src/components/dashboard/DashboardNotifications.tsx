@@ -44,11 +44,6 @@ const DashboardNotifications = () => {
           });
         }, 1000);
       }
-      
-      // Play a soft notification sound
-      const audio = new Audio('/notification.mp3');
-      audio.volume = 0.2; // Reduce volume
-      audio.play().catch(e => console.log('Audio play failed:', e));
     }
   }, [notified, totalOverdueItems, overdueBooks.length, overdueEquipment.length, navigate]);
   

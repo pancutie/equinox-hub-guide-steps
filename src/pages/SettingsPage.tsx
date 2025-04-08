@@ -1,76 +1,134 @@
 
 import MainLayout from "@/components/layout/MainLayout";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const SettingsPage = () => {
+  // Personal information state
+  const [firstName, setFirstName] = useState("John");
+  const [lastName, setLastName] = useState("Doe");
+  const [email, setEmail] = useState("john.doe@example.com");
+  
+  // Notification settings state
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [reminderNotifications, setReminderNotifications] = useState(true);
+  
+  // Appearance settings
+  const [colorScheme, setColorScheme] = useState("system");
+  
+  // Display settings state
+  const [compactView, setCompactView] = useState(false);
+  const [showBorrowedItems, setShowBorrowedItems] = useState(true);
+  
+  // Privacy settings state
+  const [shareProfile, setShareProfile] = useState(false);
+  
+  const handleSavePersonalInfo = () => {
+    toast.success("Personal information saved successfully!");
+  };
+  
+  const handleSaveNotifications = () => {
+    toast.success("Notification preferences saved successfully!");
+  };
+  
+  const handleSaveAppearance = () => {
+    toast.success("Appearance settings saved successfully!");
+  };
+  
+  const handleSaveDisplaySettings = () => {
+    toast.success("Display preferences saved successfully!");
+  };
+  
+  const handleSavePrivacySettings = () => {
+    toast.success("Privacy settings saved successfully!");
+  };
+
   return (
     <MainLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-purple-800 dark:text-purple-300">Settings</h1>
-      </div>
+      <h1 className="text-2xl font-bold mb-6 text-purple-800 dark:text-purple-300">Settings</h1>
       
-      <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="account">Account</TabsTrigger>
+      <Tabs defaultValue="personal" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="personal">Personal</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="system">System</TabsTrigger>
+          <TabsTrigger value="display">Display</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="account">
+        <TabsContent value="personal">
           <Card>
             <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>
-                Manage your account settings and preferences
-              </CardDescription>
+              <CardTitle>Personal Information</CardTitle>
+              <CardDescription>Update your personal details here.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Your name" defaultValue="Admin User" />
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input 
+                    id="firstName" 
+                    value={firstName} 
+                    onChange={(e) => setFirstName(e.target.value)} 
+                  />
                 </div>
-                
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" placeholder="Your email" defaultValue="admin@example.com" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Input id="role" placeholder="Your role" defaultValue="Administrator" disabled />
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input 
+                    id="lastName" 
+                    value={lastName} 
+                    onChange={(e) => setLastName(e.target.value)} 
+                  />
                 </div>
               </div>
               
-              <div className="pt-4 border-t">
-                <Label className="text-base font-semibold">Security</Label>
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                />
               </div>
+              
+              <Button onClick={handleSavePersonalInfo} className="bg-purple-600 hover:bg-purple-700">
+                Save Changes
+              </Button>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button>Save Changes</Button>
-            </CardFooter>
+          </Card>
+          
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle>Change Password</CardTitle>
+              <CardDescription>Update your password here.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Current Password</Label>
+                <Input id="currentPassword" type="password" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input id="newPassword" type="password" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input id="confirmPassword" type="password" />
+              </div>
+              
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                Update Password
+              </Button>
+            </CardContent>
           </Card>
         </TabsContent>
         
@@ -78,129 +136,138 @@ const SettingsPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Notification Settings</CardTitle>
-              <CardDescription>
-                Configure how you want to receive notifications
-              </CardDescription>
+              <CardDescription>Manage your notification preferences.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="overdue-email" className="text-base">Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Receive email notifications for overdue items</p>
-                  </div>
-                  <Switch id="overdue-email" defaultChecked />
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Email Notifications</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Receive updates via email</p>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="system-notif" className="text-base">System Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Show notifications in the system</p>
-                  </div>
-                  <Switch id="system-notif" defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="sound-notif" className="text-base">Sound Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Play a sound for new notifications</p>
-                  </div>
-                  <Switch id="sound-notif" defaultChecked />
-                </div>
+                <Switch 
+                  checked={emailNotifications} 
+                  onCheckedChange={setEmailNotifications} 
+                />
               </div>
               
-              <div className="pt-4 border-t">
-                <Label className="text-base font-semibold">Notification Frequency</Label>
-                <div className="mt-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="daily-digest" className="text-base">Daily Digest</Label>
-                      <p className="text-sm text-muted-foreground">Receive a daily summary of activities</p>
-                    </div>
-                    <Switch id="daily-digest" />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="weekly-digest" className="text-base">Weekly Digest</Label>
-                      <p className="text-sm text-muted-foreground">Receive a weekly summary of activities</p>
-                    </div>
-                    <Switch id="weekly-digest" defaultChecked />
-                  </div>
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Push Notifications</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Receive in-app notifications</p>
                 </div>
+                <Switch 
+                  checked={pushNotifications} 
+                  onCheckedChange={setPushNotifications} 
+                />
               </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Reminder Notifications</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Receive reminders about due dates</p>
+                </div>
+                <Switch 
+                  checked={reminderNotifications} 
+                  onCheckedChange={setReminderNotifications} 
+                />
+              </div>
+              
+              <Button onClick={handleSaveNotifications} className="mt-4 bg-purple-600 hover:bg-purple-700">
+                Save Preferences
+              </Button>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button>Save Changes</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         
-        <TabsContent value="system">
+        <TabsContent value="display">
           <Card>
             <CardHeader>
-              <CardTitle>System Settings</CardTitle>
-              <CardDescription>
-                Configure system-wide settings
-              </CardDescription>
+              <CardTitle>Display Settings</CardTitle>
+              <CardDescription>Customize the way content is displayed.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="auto-backup" className="text-base">Automatic Backups</Label>
-                    <p className="text-sm text-muted-foreground">Enable automatic database backups</p>
-                  </div>
-                  <Switch id="auto-backup" defaultChecked />
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Compact View</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Display items in a more compact format</p>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="analytics" className="text-base">Analytics Collection</Label>
-                    <p className="text-sm text-muted-foreground">Allow system to collect usage analytics</p>
-                  </div>
-                  <Switch id="analytics" defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="cache-days" className="text-base">Cache Duration</Label>
-                    <p className="text-sm text-muted-foreground">Maximum days to keep cached data</p>
-                  </div>
-                  <Input id="cache-days" type="number" defaultValue="7" className="w-24" />
-                </div>
+                <Switch 
+                  checked={compactView} 
+                  onCheckedChange={setCompactView} 
+                />
               </div>
               
-              <div className="pt-4 border-t">
-                <Label className="text-base font-semibold">Data Management</Label>
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="backup-now">Manual Backup</Label>
-                    <div className="flex gap-2">
-                      <Input id="backup-now" placeholder="Backup name" />
-                      <Button className="shrink-0">Backup Now</Button>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="imported-data">Import Data</Label>
-                    <div className="flex gap-2">
-                      <Input id="imported-data" type="file" />
-                      <Button className="shrink-0">Upload</Button>
-                    </div>
-                  </div>
-                  
-                  <Button variant="destructive" className="w-full sm:w-auto mt-2">
-                    Export All Data
-                  </Button>
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Show Borrowed Items</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Display currently borrowed items in dashboard</p>
                 </div>
+                <Switch 
+                  checked={showBorrowedItems} 
+                  onCheckedChange={setShowBorrowedItems} 
+                />
               </div>
+              
+              <Button onClick={handleSaveDisplaySettings} className="mt-4 bg-purple-600 hover:bg-purple-700">
+                Save Preferences
+              </Button>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button>Save Changes</Button>
-            </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="privacy">
+          <Card>
+            <CardHeader>
+              <CardTitle>Privacy Settings</CardTitle>
+              <CardDescription>Control your privacy preferences.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Share Profile Information</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Allow others to see your profile information</p>
+                </div>
+                <Switch 
+                  checked={shareProfile} 
+                  onCheckedChange={setShareProfile} 
+                />
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-2">
+                <p className="font-medium">Data Retention</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Choose how long to keep your borrowing history</p>
+                <RadioGroup defaultValue="forever" className="mt-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="30days" id="30days" />
+                    <Label htmlFor="30days">30 days</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="90days" id="90days" />
+                    <Label htmlFor="90days">90 days</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="1year" id="1year" />
+                    <Label htmlFor="1year">1 year</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="forever" id="forever" />
+                    <Label htmlFor="forever">Forever</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              <Button onClick={handleSavePrivacySettings} className="mt-4 bg-purple-600 hover:bg-purple-700">
+                Save Preferences
+              </Button>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>

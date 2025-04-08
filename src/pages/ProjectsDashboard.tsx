@@ -1,10 +1,10 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import DashboardCard from "@/components/dashboard/DashboardCard";
-import { Award, BookOpen, GraduationCap, FileText, Clipboard, BarChart } from "lucide-react";
+import { Award, BookOpen, GraduationCap, FileText, Clipboard, BarChart as BarChartIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  BarChart as RechartsBarChart, 
+  BarChart, 
   Bar, 
   XAxis, 
   YAxis, 
@@ -113,14 +113,14 @@ const ProjectsDashboard = () => {
           <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900 hover:shadow-lg transition-all duration-300">
             <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
               <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2 text-lg">
-                <BarChart size={18} />
+                <BarChartIcon size={18} />
                 Yearly Projects Distribution
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4">
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart
+                  <BarChart
                     data={yearlyProjectsData}
                     margin={{ top: 10, right: 20, left: 5, bottom: 5 }}
                   >
@@ -141,7 +141,7 @@ const ProjectsDashboard = () => {
                     <Bar dataKey="extension" name="Extension Projects" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="researchActivities" name="Research Activities" fill="#6366f1" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="extensionActivities" name="Extension Activities" fill="#a855f7" radius={[4, 4, 0, 0]} />
-                  </RechartsBarChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
