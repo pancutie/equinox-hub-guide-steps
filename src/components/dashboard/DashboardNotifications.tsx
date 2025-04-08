@@ -30,18 +30,39 @@ const DashboardNotifications = () => {
       
       // Show equipment notification separately for clarity
       if (overdueEquipment.length > 0) {
-        // Delay the second notification slightly for better UX
-        setTimeout(() => {
-          toast.warning(`You have ${overdueEquipment.length} overdue equipment items`, {
-            description: `These equipment items need to be returned immediately.`,
-            action: {
-              label: "View Details",
-              onClick: () => navigate('/reports/overdue-equipment'),
-            },
-            position: "top-right",
-            duration: 5000,
-          });
-        }, 1000);
+        // Count ICS and PAR equipment separately
+        const icsEquipment = overdueEquipment.filter(item => item.propertyNo.startsWith('E'));
+        const parEquipment = overdueEquipment.filter(item => item.propertyNo.startsWith('P'));
+        
+        // Show ICS equipment notification
+        if (icsEquipment.length > 0) {
+          setTimeout(() => {
+            toast.warning(`You have ${icsEquipment.length} overdue ICS equipment items`, {
+              description: `These ICS equipment items need to be returned immediately.`,
+              action: {
+                label: "View Details",
+                onClick: () => navigate('/reports/overdue-equipment-ics'),
+              },
+              position: "top-right",
+              duration: 5000,
+            });
+          }, 1000);
+        }
+        
+        // Show PAR equipment notification
+        if (parEquipment.length > 0) {
+          setTimeout(() => {
+            toast.warning(`You have ${parEquipment.length} overdue PAR equipment items`, {
+              description: `These PAR equipment items need to be returned immediately.`,
+              action: {
+                label: "View Details",
+                onClick: () => navigate('/reports/overdue-equipment-par'),
+              },
+              position: "top-right",
+              duration: 5000,
+            });
+          }, 2000);
+        }
       }
     }
   }, [notified, totalOverdueItems, overdueBooks.length, overdueEquipment.length, navigate]);

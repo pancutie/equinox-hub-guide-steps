@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowLeft, Upload, FileText, Image, File, X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import FileViewer from "@/components/projects/FileViewer";
+import { FileType } from "@/components/projects/FileType";
 
 interface Document {
   id: string;
@@ -50,6 +52,10 @@ const YearDetailsPage = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [newDocumentName, setNewDocumentName] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  // For file viewer
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [isFileViewerOpen, setIsFileViewerOpen] = useState(false);
 
   const getProjectTypeName = () => {
     switch (projectType) {
@@ -107,16 +113,10 @@ const YearDetailsPage = () => {
       description: "File deleted successfully",
     });
   };
-
-  const getFileIcon = (type: string) => {
-    switch(type.toLowerCase()) {
-      case 'pdf': return <FileText className="text-red-500" />;
-      case 'jpg':
-      case 'jpeg': 
-      case 'png': 
-      case 'gif': return <Image className="text-blue-500" />;
-      default: return <File className="text-gray-500" />;
-    }
+  
+  const handleViewFile = (doc: Document) => {
+    setSelectedDocument(doc);
+    setIsFileViewerOpen(true);
   };
 
   return (
@@ -218,8 +218,11 @@ const YearDetailsPage = () => {
                       documents.map((doc) => (
                         <div key={doc.id} className="bg-white border border-purple-100 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                           <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-2">
-                              {getFileIcon(doc.type)}
+                            <div 
+                              className="flex items-center gap-2 cursor-pointer hover:text-purple-700" 
+                              onClick={() => handleViewFile(doc)}
+                            >
+                              <FileType type={doc.type} />
                               <span className="font-medium">{doc.name}</span>
                             </div>
                             <Button
@@ -235,6 +238,14 @@ const YearDetailsPage = () => {
                             <p>Type: {doc.type.toUpperCase()}</p>
                             <p>Uploaded: {doc.uploadDate}</p>
                           </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="mt-3 w-full text-xs"
+                            onClick={() => handleViewFile(doc)}
+                          >
+                            View File
+                          </Button>
                         </div>
                       ))
                     ) : (
@@ -251,6 +262,12 @@ const YearDetailsPage = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <FileViewer 
+        isOpen={isFileViewerOpen}
+        onClose={() => setIsFileViewerOpen(false)}
+        file={selectedDocument}
+      />
     </MainLayout>
   );
 };
