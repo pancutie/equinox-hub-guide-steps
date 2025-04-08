@@ -22,11 +22,11 @@ const equipmentICSData = [
   { id: 2, propertyNo: "E1002", description: "Projector", quantity: 1, unit: "pc", status: "Overdue", borrower: "Maria Santos", dueDate: "2025-03-20" },
   { id: 3, propertyNo: "E1003", description: "Whiteboard", quantity: 1, unit: "pc", status: "Available" },
   { id: 4, propertyNo: "E1004", description: "Monitor", quantity: 2, unit: "pcs", status: "Available" },
-  { id: 5, propertyNo: "E1005", description: "Tablet", quantity: 1, unit: "pc", status: "Borrowed", borrower: "Ana Gonzales", dueDate: "2025-04-10" },
+  { id: 5, propertyNo: "E1005", description: "Tablet", quantity: 1, unit: "pc", status: "Overdue", borrower: "Ana Gonzales", dueDate: "2025-04-10" },
 ];
 
 const equipmentPARData = [
-  { id: 1, propertyNo: "P1001", description: "Office Chair", quantity: 1, unit: "pc", status: "Borrowed", borrower: "Carlos Tan", dueDate: "2025-04-20" },
+  { id: 1, propertyNo: "P1001", description: "Office Chair", quantity: 1, unit: "pc", status: "Overdue", borrower: "Carlos Tan", dueDate: "2025-04-20" },
   { id: 2, propertyNo: "P1002", description: "Filing Cabinet", quantity: 1, unit: "pc", status: "Available" },
   { id: 3, propertyNo: "P1003", description: "Desk", quantity: 1, unit: "pc", status: "Available" },
   { id: 4, propertyNo: "P1004", description: "Bookshelf", quantity: 1, unit: "pc", status: "Available" },
@@ -39,7 +39,34 @@ const projectsData = [
   { id: 3, title: "Machine Learning Applications", type: "Research", status: "Ongoing", year: "2024", lead: "Dr. Pedro Reyes" },
   { id: 4, title: "Digital Literacy Program", type: "Extension", status: "Completed", year: "2023", lead: "Prof. Ana Gonzales" },
   { id: 5, title: "Database Optimization Study", type: "Research", status: "Completed", year: "2023", lead: "Dr. Carlos Tan" },
+  { id: 6, title: "Rural Tech Education", type: "Extension Activities", status: "Ongoing", year: "2024", lead: "Dr. Lisa Moore" },
+  { id: 7, title: "Data Mining Research", type: "Research Activities", status: "Completed", year: "2023", lead: "Prof. James Wilson" },
+  { id: 8, title: "Community Coding Workshop", type: "Extension Activities", status: "Completed", year: "2023", lead: "Dr. Elena Rodriguez" },
+  { id: 9, title: "Neural Networks Study", type: "Research Activities", status: "Ongoing", year: "2024", lead: "Prof. Robert Chen" }
 ];
+
+const projectsAnalytics = {
+  research: {
+    completed: projectsData.filter(p => p.type === "Research" && p.status === "Completed").length,
+    ongoing: projectsData.filter(p => p.type === "Research" && p.status === "Ongoing").length,
+    total: projectsData.filter(p => p.type === "Research").length
+  },
+  extension: {
+    completed: projectsData.filter(p => p.type === "Extension" && p.status === "Completed").length,
+    ongoing: projectsData.filter(p => p.type === "Extension" && p.status === "Ongoing").length,
+    total: projectsData.filter(p => p.type === "Extension").length
+  },
+  researchActivities: {
+    completed: projectsData.filter(p => p.type === "Research Activities" && p.status === "Completed").length,
+    ongoing: projectsData.filter(p => p.type === "Research Activities" && p.status === "Ongoing").length,
+    total: projectsData.filter(p => p.type === "Research Activities").length
+  },
+  extensionActivities: {
+    completed: projectsData.filter(p => p.type === "Extension Activities" && p.status === "Completed").length,
+    ongoing: projectsData.filter(p => p.type === "Extension Activities" && p.status === "Ongoing").length,
+    total: projectsData.filter(p => p.type === "Extension Activities").length
+  }
+};
 
 const AutoReportPage = () => {
   const reportRef = useRef<HTMLDivElement>(null);
@@ -91,11 +118,12 @@ const AutoReportPage = () => {
 
       <div ref={reportRef}>
         <Tabs defaultValue="books" className="w-full">
-          <TabsList className="grid grid-cols-4 mb-4">
+          <TabsList className="grid grid-cols-5 mb-4">
             <TabsTrigger value="books">Books</TabsTrigger>
             <TabsTrigger value="equipmentICS">Equipment ICS</TabsTrigger>
             <TabsTrigger value="equipmentPAR">Equipment PAR</TabsTrigger>
             <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="projectSummary">Project Summary</TabsTrigger>
           </TabsList>
 
           <TabsContent value="books">
@@ -298,7 +326,7 @@ const AutoReportPage = () => {
           <TabsContent value="projects">
             <Card>
               <CardHeader className="bg-purple-50 dark:bg-purple-900/20">
-                <CardTitle className="text-center text-purple-800 dark:text-purple-300">Projects Summary Report</CardTitle>
+                <CardTitle className="text-center text-purple-800 dark:text-purple-300">Projects Report</CardTitle>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="mb-4">
@@ -351,6 +379,169 @@ const AutoReportPage = () => {
                     <p className="text-lg font-bold">{projectsData.filter(project => project.status === 'Ongoing').length}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="projectSummary">
+            <Card>
+              <CardHeader className="bg-purple-50 dark:bg-purple-900/20">
+                <CardTitle className="text-center text-purple-800 dark:text-purple-300">Projects Summary Report</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Generated on: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <Card className="border border-purple-100 dark:border-purple-900">
+                    <CardHeader className="bg-purple-50 dark:bg-purple-900/30 py-3">
+                      <CardTitle className="text-lg text-purple-800 dark:text-purple-300">Research Projects</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Projects:</span>
+                          <span className="text-lg font-bold">{projectsAnalytics.research.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-600 dark:text-green-400">Completed:</span>
+                          <span className="font-medium">{projectsAnalytics.research.completed}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-blue-600 dark:text-blue-400">Ongoing:</span>
+                          <span className="font-medium">{projectsAnalytics.research.ongoing}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border border-blue-100 dark:border-blue-900">
+                    <CardHeader className="bg-blue-50 dark:bg-blue-900/30 py-3">
+                      <CardTitle className="text-lg text-blue-800 dark:text-blue-300">Extension Projects</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Projects:</span>
+                          <span className="text-lg font-bold">{projectsAnalytics.extension.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-600 dark:text-green-400">Completed:</span>
+                          <span className="font-medium">{projectsAnalytics.extension.completed}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-blue-600 dark:text-blue-400">Ongoing:</span>
+                          <span className="font-medium">{projectsAnalytics.extension.ongoing}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border border-indigo-100 dark:border-indigo-900">
+                    <CardHeader className="bg-indigo-50 dark:bg-indigo-900/30 py-3">
+                      <CardTitle className="text-lg text-indigo-800 dark:text-indigo-300">Research Activities</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Activities:</span>
+                          <span className="text-lg font-bold">{projectsAnalytics.researchActivities.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-600 dark:text-green-400">Completed:</span>
+                          <span className="font-medium">{projectsAnalytics.researchActivities.completed}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-blue-600 dark:text-blue-400">Ongoing:</span>
+                          <span className="font-medium">{projectsAnalytics.researchActivities.ongoing}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border border-violet-100 dark:border-violet-900">
+                    <CardHeader className="bg-violet-50 dark:bg-violet-900/30 py-3">
+                      <CardTitle className="text-lg text-violet-800 dark:text-violet-300">Extension Activities</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Activities:</span>
+                          <span className="text-lg font-bold">{projectsAnalytics.extensionActivities.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-600 dark:text-green-400">Completed:</span>
+                          <span className="font-medium">{projectsAnalytics.extensionActivities.completed}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-blue-600 dark:text-blue-400">Ongoing:</span>
+                          <span className="font-medium">{projectsAnalytics.extensionActivities.ongoing}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <Card className="mt-4">
+                  <CardHeader className="bg-gray-50 dark:bg-gray-800 py-3">
+                    <CardTitle className="text-lg">Overall Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Projects:</span>
+                          <span className="text-lg font-bold">{
+                            projectsAnalytics.research.total + 
+                            projectsAnalytics.extension.total + 
+                            projectsAnalytics.researchActivities.total + 
+                            projectsAnalytics.extensionActivities.total
+                          }</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Research Projects:</span>
+                          <span>{projectsAnalytics.research.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Extension Projects:</span>
+                          <span>{projectsAnalytics.extension.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Research Activities:</span>
+                          <span>{projectsAnalytics.researchActivities.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Extension Activities:</span>
+                          <span>{projectsAnalytics.extensionActivities.total}</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Completed:</span>
+                          <span className="text-lg font-bold text-green-600 dark:text-green-400">{
+                            projectsAnalytics.research.completed + 
+                            projectsAnalytics.extension.completed + 
+                            projectsAnalytics.researchActivities.completed + 
+                            projectsAnalytics.extensionActivities.completed
+                          }</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <span className="font-medium">Total Ongoing:</span>
+                          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{
+                            projectsAnalytics.research.ongoing + 
+                            projectsAnalytics.extension.ongoing + 
+                            projectsAnalytics.researchActivities.ongoing + 
+                            projectsAnalytics.extensionActivities.ongoing
+                          }</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>

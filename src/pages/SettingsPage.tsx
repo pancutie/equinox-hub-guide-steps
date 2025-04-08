@@ -22,9 +22,6 @@ const SettingsPage = () => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [reminderNotifications, setReminderNotifications] = useState(true);
   
-  // Appearance settings
-  const [colorScheme, setColorScheme] = useState("system");
-  
   // Display settings state
   const [compactView, setCompactView] = useState(false);
   const [showBorrowedItems, setShowBorrowedItems] = useState(true);
@@ -38,10 +35,6 @@ const SettingsPage = () => {
   
   const handleSaveNotifications = () => {
     toast.success("Notification preferences saved successfully!");
-  };
-  
-  const handleSaveAppearance = () => {
-    toast.success("Appearance settings saved successfully!");
   };
   
   const handleSaveDisplaySettings = () => {

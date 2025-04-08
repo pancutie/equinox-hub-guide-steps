@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { overdueBooks, overdueEquipment } from '@/pages/Index';
-import { Bell } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
