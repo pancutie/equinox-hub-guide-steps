@@ -35,6 +35,8 @@ import ExtensionActivitiesPage from "./pages/projects/ExtensionActivitiesPage";
 import YearDetailsPage from "./pages/projects/YearDetailsPage";
 import UsersPage from "./pages/UsersPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import ProjectsDashboard from "./pages/ProjectsDashboard";
+import AutoReportPage from "./pages/reports/AutoReportPage";
 
 const queryClient = new QueryClient();
 
@@ -230,12 +232,31 @@ const App = () => (
               }
             />
             
+            <Route
+              path="/reports/auto-report"
+              element={
+                <ProtectedRoute>
+                  <AutoReportPage />
+                </ProtectedRoute>
+              }
+            />
+            
             {/* Analytics Route */}
             <Route
               path="/analytics"
               element={
                 <ProtectedRoute>
                   <AnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Projects Dashboard Route */}
+            <Route
+              path="/projects-dashboard"
+              element={
+                <ProtectedRoute>
+                  <ProjectsDashboard />
                 </ProtectedRoute>
               }
             />

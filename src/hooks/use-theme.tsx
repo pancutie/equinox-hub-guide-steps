@@ -40,9 +40,22 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
+      document.body.classList.add('bg-gray-900');
+      document.body.classList.add('text-gray-100');
     } else {
       root.classList.add('light');
       root.classList.remove('dark');
+      document.body.classList.remove('bg-gray-900');
+      document.body.classList.remove('text-gray-100');
+    }
+    
+    // Apply background color to body for full-page coloring
+    if (theme === 'dark') {
+      document.body.style.backgroundColor = '#121212';
+      document.body.style.color = '#e5e5e5';
+    } else {
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.color = '#1a1a1a';
     }
     
     // Save theme preference to localStorage

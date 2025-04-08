@@ -1,396 +1,667 @@
 
-import React, { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { BookOpen, Database, Clipboard, Users, BookMarked, GraduationCap, Award } from "lucide-react";
+import { Book, Check, Database, Clipboard, BarChart, Award, GraduationCap } from "lucide-react";
+import { 
+  BarChart as RechartsBarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
+
+// Mock data for Books analytics
+const booksData = {
+  totalBooks: 181,
+  availableBooks: 124,
+  borrowedBooks: 45,
+  overdueBooks: 12
+};
+
+const monthlyBooksData = [
+  { month: 'Jan', borrowed: 32, returned: 28 },
+  { month: 'Feb', borrowed: 28, returned: 25 },
+  { month: 'Mar', borrowed: 34, returned: 31 },
+  { month: 'Apr', borrowed: 39, returned: 37 },
+  { month: 'May', borrowed: 45, returned: 40 },
+  { month: 'Jun', borrowed: 41, returned: 38 },
+];
+
+const bookStatusData = [
+  { name: 'Available', value: booksData.availableBooks, color: '#8b5cf6' },
+  { name: 'Borrowed', value: booksData.borrowedBooks, color: '#10b981' },
+  { name: 'Overdue', value: booksData.overdueBooks, color: '#ef4444' },
+];
+
+// Mock data for Equipment analytics
+const equipmentData = {
+  totalEquipmentICS: 63,
+  availableEquipmentICS: 45,
+  borrowedEquipmentICS: 15,
+  overdueEquipmentICS: 3,
+  totalEquipmentPAR: 32,
+  availableEquipmentPAR: 22,
+  borrowedEquipmentPAR: 8,
+  overdueEquipmentPAR: 2
+};
+
+const monthlyEquipmentData = [
+  { month: 'Jan', borrowedICS: 18, returnedICS: 16, borrowedPAR: 12, returnedPAR: 10 },
+  { month: 'Feb', borrowedICS: 15, returnedICS: 14, borrowedPAR: 10, returnedPAR: 9 },
+  { month: 'Mar', borrowedICS: 21, returnedICS: 19, borrowedPAR: 14, returnedPAR: 13 },
+  { month: 'Apr', borrowedICS: 25, returnedICS: 23, borrowedPAR: 16, returnedPAR: 14 },
+  { month: 'May', borrowedICS: 23, returnedICS: 20, borrowedPAR: 15, returnedPAR: 13 },
+  { month: 'Jun', borrowedICS: 19, returnedICS: 17, borrowedPAR: 13, returnedPAR: 12 },
+];
+
+const equipmentStatusDataICS = [
+  { name: 'Available', value: equipmentData.availableEquipmentICS, color: '#8b5cf6' },
+  { name: 'Borrowed', value: equipmentData.borrowedEquipmentICS, color: '#10b981' },
+  { name: 'Overdue', value: equipmentData.overdueEquipmentICS, color: '#ef4444' },
+];
+
+const equipmentStatusDataPAR = [
+  { name: 'Available', value: equipmentData.availableEquipmentPAR, color: '#8b5cf6' },
+  { name: 'Borrowed', value: equipmentData.borrowedEquipmentPAR, color: '#10b981' },
+  { name: 'Overdue', value: equipmentData.overdueEquipmentPAR, color: '#ef4444' },
+];
+
+// Mock data for Projects analytics
+const projectsData = {
+  totalResearchProjects: 24,
+  totalExtensionProjects: 18,
+  totalResearchActivities: 35,
+  totalExtensionActivities: 42,
+  completedResearchProjects: 15,
+  ongoingResearchProjects: 9,
+  completedExtensionProjects: 12,
+  ongoingExtensionProjects: 6,
+  completedResearchActivities: 28,
+  ongoingResearchActivities: 7,
+  completedExtensionActivities: 30,
+  ongoingExtensionActivities: 12
+};
+
+// Yearly projects data
+const yearlyProjectsData = [
+  { year: '2020', research: 5, extension: 4, researchActivities: 8, extensionActivities: 10 },
+  { year: '2021', research: 6, extension: 5, researchActivities: 10, extensionActivities: 8 },
+  { year: '2022', research: 4, extension: 3, researchActivities: 7, extensionActivities: 12 },
+  { year: '2023', research: 5, extension: 3, researchActivities: 5, extensionActivities: 8 },
+  { year: '2024', research: 4, extension: 3, researchActivities: 5, extensionActivities: 4 },
+];
+
+const researchStatusData = [
+  { name: 'Completed', value: projectsData.completedResearchProjects, color: '#10b981' },
+  { name: 'Ongoing', value: projectsData.ongoingResearchProjects, color: '#8b5cf6' },
+];
+
+const extensionStatusData = [
+  { name: 'Completed', value: projectsData.completedExtensionProjects, color: '#10b981' },
+  { name: 'Ongoing', value: projectsData.ongoingExtensionProjects, color: '#8b5cf6' },
+];
 
 const AnalyticsPage = () => {
-  const [activeTab, setActiveTab] = useState("books");
-
-  // Sample data for books
-  const booksData = [
-    { name: 'Jan', borrowed: 40, returned: 24 },
-    { name: 'Feb', borrowed: 30, returned: 13 },
-    { name: 'Mar', borrowed: 20, returned: 8 },
-    { name: 'Apr', borrowed: 27, returned: 19 },
-    { name: 'May', borrowed: 18, returned: 15 },
-    { name: 'Jun', borrowed: 23, returned: 12 },
-  ];
-
-  const bookCategoriesData = [
-    { name: 'Science', value: 400 },
-    { name: 'History', value: 300 },
-    { name: 'Math', value: 300 },
-    { name: 'Literature', value: 200 },
-    { name: 'Computer', value: 500 },
-  ];
-
-  // Sample data for equipment
-  const equipmentICSData = [
-    { name: 'Jan', borrowed: 15, returned: 10 },
-    { name: 'Feb', borrowed: 20, returned: 8 },
-    { name: 'Mar', borrowed: 25, returned: 15 },
-    { name: 'Apr', borrowed: 18, returned: 12 },
-    { name: 'May', borrowed: 22, returned: 18 },
-    { name: 'Jun', borrowed: 14, returned: 9 },
-  ];
-  
-  const equipmentPARData = [
-    { name: 'Jan', borrowed: 8, returned: 5 },
-    { name: 'Feb', borrowed: 12, returned: 6 },
-    { name: 'Mar', borrowed: 14, returned: 9 },
-    { name: 'Apr', borrowed: 10, returned: 7 },
-    { name: 'May', borrowed: 16, returned: 11 },
-    { name: 'Jun', borrowed: 7, returned: 4 },
-  ];
-  
-  const equipmentCategoriesData = [
-    { name: 'Computer', value: 300 },
-    { name: 'Audio/Video', value: 200 },
-    { name: 'Lab', value: 250 },
-    { name: 'Office', value: 150 },
-    { name: 'Other', value: 100 },
-  ];
-
-  // Sample data for projects
-  const projectsData = [
-    { name: '2021', research: 30, extension: 20 },
-    { name: '2022', research: 40, extension: 25 },
-    { name: '2023', research: 35, extension: 30 },
-    { name: '2024', research: 50, extension: 40 },
-    { name: '2025', research: 45, extension: 35 },
-  ];
-
-  const projectStatusData = [
-    { name: 'Completed', value: 40 },
-    { name: 'Ongoing', value: 30 },
-    { name: 'Planning', value: 20 },
-    { name: 'Cancelled', value: 10 },
-  ];
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-        </div>
-
-        <Tabs defaultValue="books" onValueChange={setActiveTab} value={activeTab}>
-          <div className="flex justify-center mb-6">
-            <TabsList>
-              <TabsTrigger value="books" className="flex gap-2 items-center">
-                <BookOpen size={16} /> Books
-              </TabsTrigger>
-              <TabsTrigger value="equipment" className="flex gap-2 items-center">
-                <Database size={16} /> Equipment
-              </TabsTrigger>
-              <TabsTrigger value="projects" className="flex gap-2 items-center">
-                <GraduationCap size={16} /> Projects
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* Books Analytics */}
-          <TabsContent value="books" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Total Books</CardTitle>
-                  <CardDescription>Overall book collection</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">1,728</div>
-                    <BookMarked size={24} className="text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Currently Borrowed</CardTitle>
-                  <CardDescription>Books checked out</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">243</div>
-                    <Database size={24} className="text-amber-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Overdue Books</CardTitle>
-                  <CardDescription>Past return date</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">37</div>
-                    <AlertTriangle size={24} className="text-red-500" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Borrowing Trends</CardTitle>
-                  <CardDescription>Books borrowed vs returned over time</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={booksData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="borrowed" fill="#8884d8" name="Borrowed" />
-                      <Bar dataKey="returned" fill="#82ca9d" name="Returned" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Book Categories</CardTitle>
-                  <CardDescription>Distribution by subject</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={bookCategoriesData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {bookCategoriesData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Equipment Analytics */}
-          <TabsContent value="equipment" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Total Equipment</CardTitle>
-                  <CardDescription>All equipment items</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">457</div>
-                    <Database size={24} className="text-purple-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">ICS Items</CardTitle>
-                  <CardDescription>Total ICS equipment</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">215</div>
-                    <Database size={24} className="text-indigo-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">PAR Items</CardTitle>
-                  <CardDescription>Total PAR equipment</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">242</div>
-                    <Clipboard size={24} className="text-green-500" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>ICS Equipment Borrowing</CardTitle>
-                  <CardDescription>ICS items borrowed vs returned over time</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={equipmentICSData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="borrowed" fill="#8884d8" name="Borrowed" />
-                      <Bar dataKey="returned" fill="#82ca9d" name="Returned" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>PAR Equipment Borrowing</CardTitle>
-                  <CardDescription>PAR items borrowed vs returned over time</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={equipmentPARData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="borrowed" fill="#8844d8" name="Borrowed" />
-                      <Bar dataKey="returned" fill="#42ca9d" name="Returned" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-              
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Equipment Categories</CardTitle>
-                  <CardDescription>Distribution by type</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={equipmentCategoriesData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {equipmentCategoriesData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Projects Analytics */}
-          <TabsContent value="projects" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-                  <CardDescription>All research and extension</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">87</div>
-                    <GraduationCap size={24} className="text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Research Projects</CardTitle>
-                  <CardDescription>Academic research initiatives</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">42</div>
-                    <GraduationCap size={24} className="text-indigo-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Extension Projects</CardTitle>
-                  <CardDescription>Community outreach</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">45</div>
-                    <Award size={24} className="text-amber-500" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Projects by Year</CardTitle>
-                  <CardDescription>Research vs Extension projects</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={projectsData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="research" fill="#8884d8" name="Research" />
-                      <Bar dataKey="extension" fill="#82ca9d" name="Extension" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Project Status</CardTitle>
-                  <CardDescription>Current completion status</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] mt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={projectStatusData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {projectStatusData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-purple-800 dark:text-purple-300">Analytics</h1>
       </div>
+      
+      <Tabs defaultValue="books" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="books" className="text-sm sm:text-base">Books Analytics</TabsTrigger>
+          <TabsTrigger value="equipment" className="text-sm sm:text-base">Equipment Analytics</TabsTrigger>
+          <TabsTrigger value="projects" className="text-sm sm:text-base">Projects Analytics</TabsTrigger>
+        </TabsList>
+
+        {/* Books Analytics Content */}
+        <TabsContent value="books">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                    <Book size={18} />
+                    Total Books
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{booksData.totalBooks}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700 dark:text-green-400">
+                    <Book size={18} />
+                    Available
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{booksData.availableBooks}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                    <Check size={18} />
+                    Borrowed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{booksData.borrowedBooks}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-red-700 dark:text-red-400">
+                    <Book size={18} />
+                    Overdue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{booksData.overdueBooks}</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                  <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                    <BarChart size={18} />
+                    Monthly Book Borrowing Trend
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={monthlyBooksData}
+                        margin={{ top: 10, right: 20, left: 5, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-700" />
+                        <XAxis dataKey="month" className="dark:text-gray-300" />
+                        <YAxis className="dark:text-gray-300" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'var(--background)',
+                            borderColor: 'var(--border)',
+                            borderRadius: '8px',
+                            color: 'var(--foreground)',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }} 
+                        />
+                        <Legend />
+                        <Line type="monotone" dataKey="borrowed" name="Books Borrowed" stroke="#8b5cf6" strokeWidth={2} dot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="returned" name="Books Returned" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                  <CardTitle className="text-purple-700 dark:text-purple-300">Books Status Distribution</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="h-[300px] flex items-center justify-center">
+                    <ResponsiveContainer width="70%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={bookStatusData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {bookStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          formatter={(value, name) => [`${value} books`, name]}
+                          contentStyle={{ 
+                            backgroundColor: 'var(--background)',
+                            borderColor: 'var(--border)',
+                            borderRadius: '8px',
+                            color: 'var(--foreground)',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Equipment Analytics Content */}
+        <TabsContent value="equipment">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-purple-800 dark:text-purple-300">Equipment ICS</h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                      <Database size={18} />
+                      Total ICS
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.totalEquipmentICS}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700 dark:text-green-400">
+                      <Database size={18} />
+                      Available
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.availableEquipmentICS}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                      <Check size={18} />
+                      Borrowed
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.borrowedEquipmentICS}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-red-700 dark:text-red-400">
+                      <Database size={18} />
+                      Overdue
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.overdueEquipmentICS}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-purple-800 dark:text-purple-300">Equipment PAR</h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                      <Clipboard size={18} />
+                      Total PAR
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.totalEquipmentPAR}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700 dark:text-green-400">
+                      <Clipboard size={18} />
+                      Available
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.availableEquipmentPAR}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                      <Check size={18} />
+                      Borrowed
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.borrowedEquipmentPAR}</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-red-700 dark:text-red-400">
+                      <Clipboard size={18} />
+                      Overdue
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold">{equipmentData.overdueEquipmentPAR}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                  <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                    <BarChart size={18} />
+                    Monthly Equipment Borrowing Trend
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={monthlyEquipmentData}
+                        margin={{ top: 10, right: 20, left: 5, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-700" />
+                        <XAxis dataKey="month" className="dark:text-gray-300" />
+                        <YAxis className="dark:text-gray-300" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'var(--background)',
+                            borderColor: 'var(--border)',
+                            borderRadius: '8px',
+                            color: 'var(--foreground)',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }} 
+                        />
+                        <Legend />
+                        <Line type="monotone" dataKey="borrowedICS" name="ICS Borrowed" stroke="#6366f1" strokeWidth={2} dot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="returnedICS" name="ICS Returned" stroke="#14b8a6" strokeWidth={2} dot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="borrowedPAR" name="PAR Borrowed" stroke="#8b5cf6" strokeWidth={2} dot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="returnedPAR" name="PAR Returned" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid grid-cols-1 gap-6">
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                    <CardTitle className="text-purple-700 dark:text-purple-300">Equipment Status Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="text-center text-sm font-medium mb-2 dark:text-gray-300">ICS Equipment</h4>
+                        <div className="h-[200px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={equipmentStatusDataICS}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={70}
+                                fill="#8884d8"
+                                dataKey="value"
+                                nameKey="name"
+                                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                              >
+                                {equipmentStatusDataICS.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                formatter={(value, name) => [`${value} equipment`, name]}
+                                contentStyle={{ 
+                                  backgroundColor: 'var(--background)',
+                                  borderColor: 'var(--border)',
+                                  borderRadius: '8px',
+                                  color: 'var(--foreground)',
+                                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-center text-sm font-medium mb-2 dark:text-gray-300">PAR Equipment</h4>
+                        <div className="h-[200px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={equipmentStatusDataPAR}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={70}
+                                fill="#8884d8"
+                                dataKey="value"
+                                nameKey="name"
+                                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                              >
+                                {equipmentStatusDataPAR.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                formatter={(value, name) => [`${value} equipment`, name]}
+                                contentStyle={{ 
+                                  backgroundColor: 'var(--background)',
+                                  borderColor: 'var(--border)',
+                                  borderRadius: '8px',
+                                  color: 'var(--foreground)',
+                                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Projects Analytics Content */}
+        <TabsContent value="projects">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                    <Award size={18} />
+                    Research Projects
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{projectsData.totalResearchProjects}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                    <GraduationCap size={18} />
+                    Extension Projects
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{projectsData.totalExtensionProjects}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700 dark:text-green-300">
+                    <Check size={18} />
+                    Completed Research
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{projectsData.completedResearchProjects}</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700 dark:text-green-300">
+                    <Check size={18} />
+                    Completed Extension
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{projectsData.completedExtensionProjects}</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                  <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                    <BarChart size={18} />
+                    Yearly Projects Distribution
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={yearlyProjectsData}
+                        margin={{ top: 10, right: 20, left: 5, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-700" />
+                        <XAxis dataKey="year" className="dark:text-gray-300" />
+                        <YAxis className="dark:text-gray-300" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'var(--background)',
+                            borderColor: 'var(--border)',
+                            borderRadius: '8px',
+                            color: 'var(--foreground)',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }} 
+                        />
+                        <Legend />
+                        <Bar dataKey="research" name="Research Projects" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="extension" name="Extension Projects" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="researchActivities" name="Research Activities" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="extensionActivities" name="Extension Activities" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid grid-cols-1 gap-6">
+                <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
+                  <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
+                    <CardTitle className="text-purple-700 dark:text-purple-300">Project Status Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="text-center text-sm font-medium mb-2 dark:text-gray-300">Research Projects</h4>
+                        <div className="h-[200px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={researchStatusData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={70}
+                                fill="#8884d8"
+                                dataKey="value"
+                                nameKey="name"
+                                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                              >
+                                {researchStatusData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                formatter={(value, name) => [`${value} projects`, name]}
+                                contentStyle={{ 
+                                  backgroundColor: 'var(--background)',
+                                  borderColor: 'var(--border)',
+                                  borderRadius: '8px',
+                                  color: 'var(--foreground)',
+                                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-center text-sm font-medium mb-2 dark:text-gray-300">Extension Projects</h4>
+                        <div className="h-[200px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={extensionStatusData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={70}
+                                fill="#8884d8"
+                                dataKey="value"
+                                nameKey="name"
+                                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                              >
+                                {extensionStatusData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                formatter={(value, name) => [`${value} projects`, name]}
+                                contentStyle={{ 
+                                  backgroundColor: 'var(--background)',
+                                  borderColor: 'var(--border)',
+                                  borderRadius: '8px',
+                                  color: 'var(--foreground)',
+                                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </MainLayout>
   );
 };
