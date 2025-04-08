@@ -1,10 +1,9 @@
-
 import MainLayout from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Book, Check, Database, Clipboard, BarChart, Award, GraduationCap } from "lucide-react";
+import { Book, Check, Database, Clipboard, BarChart as BarChartIcon, Award, GraduationCap } from "lucide-react";
 import { 
-  BarChart as RechartsBarChart, 
+  BarChart, 
   Bar, 
   XAxis, 
   YAxis, 
@@ -181,7 +180,7 @@ const AnalyticsPage = () => {
               <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
                 <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
                   <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                    <BarChart size={18} />
+                    <BarChartIcon size={18} />
                     Monthly Book Borrowing Trend
                   </CardTitle>
                 </CardHeader>
@@ -369,7 +368,7 @@ const AnalyticsPage = () => {
               <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
                 <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
                   <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                    <BarChart size={18} />
+                    <BarChartIcon size={18} />
                     Monthly Equipment Borrowing Trend
                   </CardTitle>
                 </CardHeader>
@@ -544,7 +543,7 @@ const AnalyticsPage = () => {
               <Card className="bg-white dark:bg-gray-800 shadow-md border border-purple-100 dark:border-purple-900">
                 <CardHeader className="border-b border-purple-100 dark:border-purple-800/50 pb-3">
                   <CardTitle className="text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                    <BarChart size={18} />
+                    <BarChartIcon size={18} />
                     Yearly Projects Distribution
                   </CardTitle>
                 </CardHeader>
