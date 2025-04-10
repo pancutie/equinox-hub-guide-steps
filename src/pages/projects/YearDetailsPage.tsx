@@ -126,48 +126,49 @@ const YearDetailsPage = () => {
           <Button 
             variant="outline" 
             onClick={() => navigate(`/projects/${projectType}`)}
-            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700 dark:border-purple-800 dark:hover:bg-purple-900 dark:hover:text-purple-300"
           >
             <ArrowLeft size={16} className="mr-1" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold text-purple-800">
+          <h1 className="text-2xl font-bold text-purple-800 dark:text-purple-300">
             {getProjectTypeName()} - {year}
           </h1>
         </div>
 
-        <Card className="border border-purple-100">
+        <Card className="border border-purple-100 dark:border-purple-800 dark:bg-gray-800">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-purple-700">Project Resources</h2>
+              <h2 className="text-xl font-semibold text-purple-700 dark:text-purple-300">Project Resources</h2>
               
               <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700">
+                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-700 dark:to-purple-800">
                     <Upload size={16} className="mr-1" />
                     Upload New
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px] dark:bg-gray-900">
                   <DialogHeader>
-                    <DialogTitle>Upload Document</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="dark:text-white">Upload Document</DialogTitle>
+                    <DialogDescription className="dark:text-gray-300">
                       Upload a new document, photo or file to the project.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="name">Document Name</Label>
+                      <Label htmlFor="name" className="dark:text-white">Document Name</Label>
                       <Input
                         id="name"
                         value={newDocumentName}
                         onChange={(e) => setNewDocumentName(e.target.value)}
                         placeholder="Enter document name"
+                        className="dark:bg-gray-800 dark:text-white dark:border-gray-700"
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="file">File</Label>
-                      <div className="border rounded-md p-2 bg-gray-50">
+                      <Label htmlFor="file" className="dark:text-white">File</Label>
+                      <div className="border rounded-md p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                         <Input
                           id="file"
                           type="file"
@@ -178,18 +179,18 @@ const YearDetailsPage = () => {
                             }
                           }}
                         />
-                        <div className="flex items-center justify-center h-32 border-2 border-dashed rounded-md border-gray-300 hover:border-purple-400 cursor-pointer"
+                        <div className="flex items-center justify-center h-32 border-2 border-dashed rounded-md border-gray-300 hover:border-purple-400 dark:border-gray-700 dark:hover:border-purple-600 cursor-pointer"
                           onClick={() => document.getElementById('file')?.click()}
                         >
                           {selectedFile ? (
                             <div className="text-center">
-                              <p className="text-sm text-gray-600">{selectedFile.name}</p>
-                              <p className="text-xs text-gray-500">{Math.round(selectedFile.size / 1024)} KB</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{selectedFile.name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">{Math.round(selectedFile.size / 1024)} KB</p>
                             </div>
                           ) : (
                             <div className="text-center">
-                              <Plus className="mx-auto h-12 w-12 text-gray-400" />
-                              <p className="text-sm text-gray-600">Click to select a file</p>
+                              <Plus className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                              <p className="text-sm text-gray-600 dark:text-gray-300">Click to select a file</p>
                             </div>
                           )}
                         </div>
@@ -197,7 +198,7 @@ const YearDetailsPage = () => {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>Cancel</Button>
+                    <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)} className="dark:border-gray-700 dark:text-white">Cancel</Button>
                     <Button onClick={handleUpload}>Upload</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -205,10 +206,25 @@ const YearDetailsPage = () => {
             </div>
 
             <Tabs defaultValue="documents" className="w-full" onValueChange={handleTabChange}>
-              <TabsList className="mb-4 bg-purple-50">
-                <TabsTrigger value="documents" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800">Documents</TabsTrigger>
-                <TabsTrigger value="photos" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800">Photos</TabsTrigger>
-                <TabsTrigger value="other" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800">Other Files</TabsTrigger>
+              <TabsList className="mb-4 bg-purple-50 dark:bg-purple-900/30">
+                <TabsTrigger 
+                  value="documents" 
+                  className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 dark:data-[state=active]:bg-purple-800 dark:data-[state=active]:text-white dark:text-gray-200"
+                >
+                  Documents
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="photos" 
+                  className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 dark:data-[state=active]:bg-purple-800 dark:data-[state=active]:text-white dark:text-gray-200"
+                >
+                  Photos
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="other" 
+                  className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 dark:data-[state=active]:bg-purple-800 dark:data-[state=active]:text-white dark:text-gray-200"
+                >
+                  Other Files
+                </TabsTrigger>
               </TabsList>
               
               {['documents', 'photos', 'other'].map((tabValue) => (
@@ -216,32 +232,32 @@ const YearDetailsPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {documents && documents.length > 0 ? (
                       documents.map((doc) => (
-                        <div key={doc.id} className="bg-white border border-purple-100 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div key={doc.id} className="bg-white border border-purple-100 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-purple-800">
                           <div className="flex justify-between items-start mb-2">
                             <div 
-                              className="flex items-center gap-2 cursor-pointer hover:text-purple-700" 
+                              className="flex items-center gap-2 cursor-pointer hover:text-purple-700 dark:hover:text-purple-400" 
                               onClick={() => handleViewFile(doc)}
                             >
                               <FileType type={doc.type} />
-                              <span className="font-medium">{doc.name}</span>
+                              <span className="font-medium dark:text-white">{doc.name}</span>
                             </div>
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
                               onClick={() => handleDelete(doc.id)}
                             >
                               <X size={16} />
                             </Button>
                           </div>
-                          <div className="text-xs text-gray-500 mt-2">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                             <p>Type: {doc.type.toUpperCase()}</p>
                             <p>Uploaded: {doc.uploadDate}</p>
                           </div>
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className="mt-3 w-full text-xs"
+                            className="mt-3 w-full text-xs dark:border-gray-700 dark:text-gray-200"
                             onClick={() => handleViewFile(doc)}
                           >
                             View File
@@ -250,9 +266,9 @@ const YearDetailsPage = () => {
                       ))
                     ) : (
                       <div className="col-span-full flex flex-col items-center justify-center py-8 text-center">
-                        <File className="h-16 w-16 text-gray-300 mb-2" />
-                        <h3 className="text-lg font-medium text-gray-900">No files yet</h3>
-                        <p className="text-gray-500">Upload your first file by clicking the button above.</p>
+                        <File className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-2" />
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-300">No files yet</h3>
+                        <p className="text-gray-500 dark:text-gray-400">Upload your first file by clicking the button above.</p>
                       </div>
                     )}
                   </div>

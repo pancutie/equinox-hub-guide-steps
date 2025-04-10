@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FileType } from "@/components/projects/FileType";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import { useTheme } from "@/hooks/use-theme";
 
 interface FileViewerProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ interface FileViewerProps {
 }
 
 const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
+  const { theme } = useTheme();
+  
   if (!file) return null;
 
   const renderFileContent = () => {
@@ -40,10 +43,10 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For PDF files
     if (fileType === 'pdf') {
       return (
-        <div className="text-center p-8 bg-gray-100 rounded-lg">
+        <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <FileType type={fileType} size={48} className="mx-auto mb-4" />
-          <p className="font-medium text-gray-800">PDF Preview</p>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="font-medium text-gray-800 dark:text-gray-200">PDF Preview</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
             This is where a PDF viewer would be embedded in a production app.
           </p>
         </div>
@@ -52,13 +55,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     
     // For other file types
     return (
-      <div className="text-center p-8 bg-gray-100 rounded-lg">
+      <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
         <FileType type={fileType} size={48} className="mx-auto mb-4" />
-        <p className="font-medium text-gray-800">{file.name}</p>
-        <p className="text-sm text-gray-600 mt-2">
+        <p className="font-medium text-gray-800 dark:text-gray-200">{file.name}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
           File type: {fileType.toUpperCase()}
         </p>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
           Uploaded on: {file.uploadDate}
         </p>
         <Button className="mt-4">Download File</Button>
@@ -67,10 +70,12 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-3xl">
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) onClose();
+    }}>
+      <DialogContent className="sm:max-w-3xl dark:bg-gray-900">
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle className="text-xl">{file.name}</DialogTitle>
+          <DialogTitle className="text-xl dark:text-white">{file.name}</DialogTitle>
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
