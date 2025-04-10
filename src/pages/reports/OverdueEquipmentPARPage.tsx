@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Search, FileDown, Printer, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-// Sample data for overdue equipment PAR
+// Sample data for overdue equipment PAR - Updated to ensure consistency
 const overdueEquipmentPAR = [
   { 
     id: 1, 
@@ -71,31 +71,31 @@ const OverdueEquipmentPARPage = () => {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-bold text-red-600 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
             <AlertTriangle className="h-6 w-6" />
             Overdue Equipment (PAR)
           </h1>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 dark:border-gray-700 dark:text-gray-200">
               <Printer size={16} />
               <span className="hidden sm:inline">Print</span>
             </Button>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 dark:border-gray-700 dark:text-gray-200">
               <FileDown size={16} />
               <span className="hidden sm:inline">Export</span>
             </Button>
           </div>
         </div>
 
-        <Card className="border-red-200 dark:border-red-900">
+        <Card className="border-red-200 dark:border-red-900 dark:bg-gray-800/50">
           <CardHeader className="pb-3">
-            <CardTitle>Overdue Equipment List</CardTitle>
+            <CardTitle className="dark:text-white">Overdue Equipment List</CardTitle>
             <div className="relative max-w-md">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input
                 type="search"
                 placeholder="Search equipment..."
-                className="pl-8 max-w-sm"
+                className="pl-8 max-w-sm dark:bg-gray-800 dark:text-white dark:border-gray-700"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -104,28 +104,28 @@ const OverdueEquipmentPARPage = () => {
           <CardContent>
             <div className="rounded-md border border-red-200 dark:border-red-900">
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-red-50 dark:bg-red-900/20">
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">PAR Number</TableHead>
-                    <TableHead>Borrower</TableHead>
-                    <TableHead className="hidden md:table-cell">Borrowed Date</TableHead>
-                    <TableHead className="hidden sm:table-cell">Due Date</TableHead>
-                    <TableHead>Days Overdue</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="dark:text-gray-300">ID</TableHead>
+                    <TableHead className="dark:text-gray-300">Name</TableHead>
+                    <TableHead className="hidden md:table-cell dark:text-gray-300">PAR Number</TableHead>
+                    <TableHead className="dark:text-gray-300">Borrower</TableHead>
+                    <TableHead className="hidden md:table-cell dark:text-gray-300">Borrowed Date</TableHead>
+                    <TableHead className="hidden sm:table-cell dark:text-gray-300">Due Date</TableHead>
+                    <TableHead className="dark:text-gray-300">Days Overdue</TableHead>
+                    <TableHead className="text-right dark:text-gray-300">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="dark:bg-gray-800/50">
                   {filteredEquipment.length > 0 ? (
                     filteredEquipment.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item.id}</TableCell>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell className="hidden md:table-cell">{item.parNumber}</TableCell>
-                        <TableCell>{item.borrower}</TableCell>
-                        <TableCell className="hidden md:table-cell">{item.borrowDate}</TableCell>
-                        <TableCell className="hidden sm:table-cell">{item.dueDate}</TableCell>
+                      <TableRow key={item.id} className="dark:border-gray-700">
+                        <TableCell className="dark:text-gray-300">{item.id}</TableCell>
+                        <TableCell className="dark:text-gray-300">{item.name}</TableCell>
+                        <TableCell className="hidden md:table-cell dark:text-gray-300">{item.parNumber}</TableCell>
+                        <TableCell className="dark:text-gray-300">{item.borrower}</TableCell>
+                        <TableCell className="hidden md:table-cell dark:text-gray-300">{item.borrowDate}</TableCell>
+                        <TableCell className="hidden sm:table-cell dark:text-gray-300">{item.dueDate}</TableCell>
                         <TableCell>
                           <Badge variant="destructive">{item.daysOverdue} days</Badge>
                         </TableCell>
@@ -138,7 +138,7 @@ const OverdueEquipmentPARPage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-4">
+                      <TableCell colSpan={8} className="text-center py-4 dark:text-gray-300">
                         No overdue equipment found matching your search.
                       </TableCell>
                     </TableRow>
