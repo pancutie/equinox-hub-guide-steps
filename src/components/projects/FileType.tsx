@@ -8,10 +8,10 @@ import {
   FileArchive, 
   FileAudio, 
   FileVideo,
-  FilePdf,
+  File as FileFallback,
   FileJson,
   FileSearch,
-  FilePresentation
+  Presentation
 } from "lucide-react";
 
 interface FileTypeProps {
@@ -25,7 +25,7 @@ export const FileType: React.FC<FileTypeProps> = ({ type, size = 24, className =
   
   switch (fileType) {
     case 'pdf':
-      return <FilePdf size={size} className={`text-red-500 dark:text-red-400 ${className}`} />;
+      return <FileText size={size} className={`text-red-500 dark:text-red-400 ${className}`} />; // Using FileText for PDF
     case 'jpg':
     case 'jpeg':
     case 'png':
@@ -71,7 +71,7 @@ export const FileType: React.FC<FileTypeProps> = ({ type, size = 24, className =
       return <FileText size={size} className={`text-blue-600 dark:text-blue-500 ${className}`} />;
     case 'ppt':
     case 'pptx':
-      return <FilePresentation size={size} className={`text-orange-500 dark:text-orange-400 ${className}`} />;
+      return <Presentation size={size} className={`text-orange-500 dark:text-orange-400 ${className}`} />; // Using Presentation instead of FilePresentation
     case 'generic':
       return <FileSearch size={size} className={`text-gray-500 dark:text-gray-400 ${className}`} />;
     default:

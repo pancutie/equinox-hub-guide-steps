@@ -53,9 +53,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (theme === 'dark') {
       document.body.style.backgroundColor = '#111827'; // Using a slightly lighter dark gray
       document.body.style.color = '#f3f4f6';
+      
+      // Add CSS variables for dark mode tables to ensure text visibility
+      document.documentElement.style.setProperty('--table-text-color', '#e5e7eb');
+      document.documentElement.style.setProperty('--table-cell-text', '#d1d5db');
+      document.documentElement.style.setProperty('--table-bg-hover', 'rgba(124, 58, 237, 0.1)');
     } else {
       document.body.style.backgroundColor = '#ffffff';
       document.body.style.color = '#1a1a1a';
+      
+      // Reset CSS variables for light mode
+      document.documentElement.style.setProperty('--table-text-color', '#1f2937');
+      document.documentElement.style.setProperty('--table-cell-text', '#374151');
+      document.documentElement.style.setProperty('--table-bg-hover', 'rgba(124, 58, 237, 0.05)');
     }
     
     // Save theme preference to localStorage
