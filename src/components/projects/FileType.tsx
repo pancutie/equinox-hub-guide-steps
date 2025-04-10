@@ -7,7 +7,11 @@ import {
   FileCode, 
   FileArchive, 
   FileAudio, 
-  FileVideo 
+  FileVideo,
+  FilePdf,
+  FileJson,
+  FileSearch,
+  FilePresentation
 } from "lucide-react";
 
 interface FileTypeProps {
@@ -21,7 +25,7 @@ export const FileType: React.FC<FileTypeProps> = ({ type, size = 24, className =
   
   switch (fileType) {
     case 'pdf':
-      return <FileText size={size} className={`text-red-500 dark:text-red-400 ${className}`} />;
+      return <FilePdf size={size} className={`text-red-500 dark:text-red-400 ${className}`} />;
     case 'jpg':
     case 'jpeg':
     case 'png':
@@ -40,9 +44,10 @@ export const FileType: React.FC<FileTypeProps> = ({ type, size = 24, className =
     case 'tsx':
     case 'html':
     case 'css':
-    case 'json':
     case 'xml':
       return <FileCode size={size} className={`text-purple-500 dark:text-purple-400 ${className}`} />;
+    case 'json':
+      return <FileJson size={size} className={`text-amber-500 dark:text-amber-400 ${className}`} />;
     case 'zip':
     case 'rar':
     case '7z':
@@ -64,6 +69,11 @@ export const FileType: React.FC<FileTypeProps> = ({ type, size = 24, className =
     case 'txt':
     case 'rtf':
       return <FileText size={size} className={`text-blue-600 dark:text-blue-500 ${className}`} />;
+    case 'ppt':
+    case 'pptx':
+      return <FilePresentation size={size} className={`text-orange-500 dark:text-orange-400 ${className}`} />;
+    case 'generic':
+      return <FileSearch size={size} className={`text-gray-500 dark:text-gray-400 ${className}`} />;
     default:
       return <File size={size} className={`text-gray-500 dark:text-gray-400 ${className}`} />;
   }

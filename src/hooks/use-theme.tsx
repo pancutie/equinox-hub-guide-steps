@@ -51,8 +51,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     
     // Apply background color to body for full-page coloring
     if (theme === 'dark') {
-      document.body.style.backgroundColor = '#121212';
-      document.body.style.color = '#e5e5e5';
+      document.body.style.backgroundColor = '#111827'; // Using a slightly lighter dark gray
+      document.body.style.color = '#f3f4f6';
     } else {
       document.body.style.backgroundColor = '#ffffff';
       document.body.style.color = '#1a1a1a';
