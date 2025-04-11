@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -15,24 +15,29 @@ import { Document, ProjectFiles } from "@/types/project";
 
 // Define allowed file types for each category
 const ALLOWED_FILE_TYPES = {
-  documents: ["pdf", "docx", "doc", "txt", "rtf"],
+  documents: ["docx", "doc", "txt", "rtf"],
   photos: ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"],
+  pdf: ["pdf"],
   other: ["pptx", "ppt", "xlsx", "xls", "csv", "zip", "rar", "mp3", "mp4", "mov", "avi"]
 };
 
 // Enhanced mock data for documents
 const mockDocuments: ProjectFiles = {
   "documents": [
-    { id: "doc1", name: "Research Proposal", type: "pdf", uploadDate: "2023-11-15" },
-    { id: "doc2", name: "Budget Plan", type: "xlsx", uploadDate: "2023-11-20" },
-    { id: "doc3", name: "Project Timeline", type: "docx", uploadDate: "2023-11-25" },
-    { id: "doc4", name: "Requirements Document", type: "pdf", uploadDate: "2023-12-01" },
+    { id: "doc1", name: "Research Proposal", type: "docx", uploadDate: "2023-11-15" },
+    { id: "doc2", name: "Project Timeline", type: "docx", uploadDate: "2023-11-25" },
+    { id: "doc3", name: "Requirements Document", type: "doc", uploadDate: "2023-12-01" },
   ],
   "photos": [
     { id: "photo1", name: "Team Meeting", type: "jpg", uploadDate: "2023-12-05" },
     { id: "photo2", name: "Field Visit", type: "png", uploadDate: "2023-12-10" },
     { id: "photo3", name: "Workshop Session", type: "jpg", uploadDate: "2023-12-15" },
     { id: "photo4", name: "Project Site", type: "jpg", uploadDate: "2023-12-20" },
+  ],
+  "pdf": [
+    { id: "pdf1", name: "Budget Plan", type: "pdf", uploadDate: "2023-11-20" },
+    { id: "pdf2", name: "Final Report", type: "pdf", uploadDate: "2023-12-22" },
+    { id: "pdf3", name: "Appendices", type: "pdf", uploadDate: "2023-12-25" },
   ],
   "other": [
     { id: "other1", name: "Presentation Slides", type: "pptx", uploadDate: "2023-12-15" },
@@ -47,7 +52,7 @@ const YearDetailsPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("documents");
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments[activeTab]);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
@@ -58,6 +63,11 @@ const YearDetailsPage = () => {
   // For delete confirmation
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
+
+  // Initialize documents based on active tab
+  useEffect(() => {
+    setDocuments(mockDocuments[activeTab] || []);
+  }, [activeTab]);
 
   const getProjectTypeName = () => {
     switch (projectType) {
@@ -71,12 +81,11 @@ const YearDetailsPage = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setDocuments(mockDocuments[value] || []);
   };
 
-  const validateFileType = (filename: string, activeTab: string): boolean => {
+  const validateFileType = (filename: string, tabType: string): boolean => {
     const extension = filename.split('.').pop()?.toLowerCase() || '';
-    return ALLOWED_FILE_TYPES[activeTab as keyof typeof ALLOWED_FILE_TYPES]?.includes(extension) || false;
+    return ALLOWED_FILE_TYPES[tabType as keyof typeof ALLOWED_FILE_TYPES]?.includes(extension) || false;
   };
 
   const handleUpload = (name: string, file: File) => {
@@ -100,8 +109,10 @@ const YearDetailsPage = () => {
       uploadDate: new Date().toISOString().split('T')[0]
     };
 
-    setDocuments([...documents, newDoc]);
-    mockDocuments[activeTab] = [...(mockDocuments[activeTab] || []), newDoc];
+    // Update both the current documents and the mockDocuments store
+    const updatedDocs = [...documents, newDoc];
+    setDocuments(updatedDocs);
+    mockDocuments[activeTab] = updatedDocs;
     
     toast({
       title: "Success",
@@ -165,7 +176,7 @@ const YearDetailsPage = () => {
                   isOpen={isUploadDialogOpen} 
                   onOpenChange={setIsUploadDialogOpen}
                   onUpload={handleUpload}
-                  activeTabLabel={activeTab === "documents" ? "Documents" : activeTab === "photos" ? "Photos" : "Other Files"}
+                  activeTabLabel={activeTab === "documents" ? "Documents" : activeTab === "photos" ? "Photos" : activeTab === "pdf" ? "PDF" : "Other Files"}
                   allowedFileTypes={ALLOWED_FILE_TYPES[activeTab as keyof typeof ALLOWED_FILE_TYPES]}
                 />
               </div>

@@ -66,6 +66,19 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
     onOpenChange(false);
   };
 
+  // Get a more user-friendly description for file types
+  const getFileTypeDescription = () => {
+    if (activeTabLabel === "PDF") {
+      return "PDF documents";
+    } else if (activeTabLabel === "Photos") {
+      return "image files";
+    } else if (activeTabLabel === "Documents") {
+      return "document files";
+    } else {
+      return "files";
+    }
+  };
+
   return (
     <>
       <Button 
@@ -84,7 +97,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="file" className="dark:text-gray-300">
-                Select {activeTabLabel.toLowerCase()}
+                Select {getFileTypeDescription()}
               </Label>
               <div className="flex items-center gap-2">
                 <Input
@@ -92,6 +105,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
                   type="file"
                   onChange={handleFileChange}
                   className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  accept={allowedFileTypes.map(type => `.${type}`).join(',')}
                 />
               </div>
               {allowedFileTypes.length > 0 && (
@@ -125,7 +139,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
             <Button variant="outline" onClick={handleClose} className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
               Cancel
             </Button>
-            <Button onClick={handleUpload}>Upload</Button>
+            <Button onClick={handleUpload} className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600">Upload</Button>
           </div>
         </DialogContent>
       </Dialog>

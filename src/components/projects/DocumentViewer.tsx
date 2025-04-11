@@ -62,6 +62,12 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
             Photos
           </TabsTrigger>
           <TabsTrigger 
+            value="pdf" 
+            className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 dark:data-[state=active]:bg-purple-800 dark:data-[state=active]:text-white dark:text-gray-200"
+          >
+            PDF
+          </TabsTrigger>
+          <TabsTrigger 
             value="other" 
             className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 dark:data-[state=active]:bg-purple-800 dark:data-[state=active]:text-white dark:text-gray-200"
           >
@@ -69,7 +75,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
           </TabsTrigger>
         </TabsList>
         
-        {['documents', 'photos', 'other'].map((tabValue) => (
+        {['documents', 'photos', 'pdf', 'other'].map((tabValue) => (
           <TabsContent key={tabValue} value={tabValue} className="mt-0">
             <div className="overflow-hidden border border-purple-100 dark:border-purple-800 rounded-lg">
               {viewMode === 'grid' ? (

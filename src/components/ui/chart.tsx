@@ -35,7 +35,7 @@ const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload
   return null;
 };
 
-// Custom legend component to fix text truncation
+// Custom legend component with improved text display
 const CustomLegend = (props: any) => {
   const { payload } = props;
   
@@ -80,6 +80,7 @@ export function Chart({ data, title, className }: ChartProps) {
                 const x = cx + radius * Math.cos(-midAngle * RADIAN);
                 const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
+                // Ensure the full text is visible
                 return (
                   <text
                     x={x}
@@ -88,6 +89,7 @@ export function Chart({ data, title, className }: ChartProps) {
                     textAnchor={x > cx ? "start" : "end"}
                     dominantBaseline="central"
                     className="text-xs font-medium"
+                    style={{ textShadow: '0px 0px 3px rgba(0,0,0,0.5)' }}
                   >
                     {`${data[index].name}: ${(percent * 100).toFixed(0)}%`}
                   </text>
