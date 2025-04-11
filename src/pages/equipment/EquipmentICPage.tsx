@@ -99,7 +99,7 @@ const EquipmentICPage = () => {
         <Button 
           variant="outline" 
           onClick={() => navigate('/equipment')}
-          className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+          className="border-purple-200 hover:bg-purple-50 hover:text-purple-700 dark:border-purple-700 dark:hover:bg-purple-900 dark:hover:text-purple-300"
         >
           <ArrowLeft size={16} className="mr-1" />
           Back
@@ -239,4 +239,3 @@ const EquipmentICPage = () => {
 };
 
 export default EquipmentICPage;
-

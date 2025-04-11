@@ -56,50 +56,50 @@ const BorrowedEquipmentPage = () => {
           variant="outline" 
           size="icon" 
           onClick={() => navigate('/reports')}
-          className="hover:bg-slate-100"
+          className="hover:bg-slate-100 dark:hover:bg-slate-800 dark:border-slate-700"
         >
           <ArrowLeft size={18} />
         </Button>
-        <h2 className="text-2xl font-bold text-blue-700">Borrowed Equipment Report</h2>
+        <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-400">Borrowed Equipment Report</h2>
       </div>
       
-      <Card className="mb-6 border shadow-sm bg-white">
+      <Card className="mb-6 border shadow-sm bg-white dark:bg-gray-900 dark:border-gray-700">
         <CardContent className="pt-6">
           <div className="relative w-full md:w-1/3 mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
             <Input 
               placeholder="Search equipment or borrowers..." 
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
-          <div className="rounded-md border overflow-hidden shadow-sm">
+          <div className="rounded-md border dark:border-gray-700 overflow-hidden shadow-sm">
             <Table>
-              <TableCaption>List of all borrowed equipment</TableCaption>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead>Property No.</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Borrower</TableHead>
-                  <TableHead>Date Borrowed</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+              <TableCaption className="dark:text-gray-400">List of all borrowed equipment</TableCaption>
+              <TableHeader className="bg-gray-50 dark:bg-gray-800/50">
+                <TableRow className="dark:border-gray-700">
+                  <TableHead className="dark:text-gray-300">Property No.</TableHead>
+                  <TableHead className="dark:text-gray-300">Description</TableHead>
+                  <TableHead className="dark:text-gray-300">Quantity</TableHead>
+                  <TableHead className="dark:text-gray-300">Borrower</TableHead>
+                  <TableHead className="dark:text-gray-300">Date Borrowed</TableHead>
+                  <TableHead className="dark:text-gray-300">Status</TableHead>
+                  <TableHead className="text-right dark:text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="dark:bg-gray-900">
                 {filteredEquipment.length > 0 ? (
                   filteredEquipment.map((item) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{item.propertyNo}</TableCell>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell>{item.quantity} {item.unit}</TableCell>
-                      <TableCell>{item.borrower}</TableCell>
-                      <TableCell>{item.borrowDate}</TableCell>
+                    <TableRow key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700">
+                      <TableCell className="font-medium dark:text-gray-200">{item.propertyNo}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.description}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.quantity} {item.unit}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.borrower}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.borrowDate}</TableCell>
                       <TableCell>
-                        <span className="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
+                        <span className="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
                           Borrowed
                         </span>
                       </TableCell>
@@ -107,7 +107,7 @@ const BorrowedEquipmentPage = () => {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="flex items-center gap-1 hover:bg-green-50 hover:text-green-600 hover:border-green-200"
+                          className="flex items-center gap-1 hover:bg-green-50 hover:text-green-600 hover:border-green-200 dark:hover:bg-green-900/30 dark:hover:text-green-400 dark:border-gray-700 dark:text-gray-300"
                           onClick={() => handleReturn(item.id)}
                         >
                           <Check size={14} />
@@ -118,7 +118,7 @@ const BorrowedEquipmentPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground dark:text-gray-500">
                       No borrowed equipment found. All equipment has been returned.
                     </TableCell>
                   </TableRow>

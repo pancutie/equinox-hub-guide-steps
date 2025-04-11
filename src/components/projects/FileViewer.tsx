@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FileType } from "@/components/projects/FileType";
-import { X, Download, ExternalLink } from "lucide-react";
+import { X, Download } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { useToast } from "@/hooks/use-toast";
@@ -72,12 +72,23 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For PDF files
     if (fileType === 'pdf') {
       return (
-        <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <FileType type={fileType} size={48} className="mx-auto mb-4" />
+        <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
+          <FileType type={fileType} size={48} className="mb-4" />
           <p className="font-medium text-gray-800 dark:text-gray-200">PDF Preview</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
             This is where a PDF viewer would be embedded in a production app.
           </p>
+          <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
+            <p className="text-gray-700 dark:text-gray-300 text-sm">
+              Document preview: {file.name}
+            </p>
+            <div className="h-40 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded my-4 bg-white/20 dark:bg-black/20">
+              <FileType type={fileType} size={64} className="opacity-40" />
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              PDF content would be displayed here
+            </p>
+          </div>
           <Button 
             className="flex items-center gap-2 mt-4" 
             onClick={handleDownload}
@@ -92,12 +103,24 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For document files
     if (['doc', 'docx', 'txt', 'rtf'].includes(fileType)) {
       return (
-        <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <FileType type={fileType} size={48} className="mx-auto mb-4" />
-          <p className="font-medium text-gray-800 dark:text-gray-200">{file.name}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Document preview would appear here in a production app.
-          </p>
+        <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
+          <FileType type={fileType} size={48} className="mb-4" />
+          <p className="font-medium text-gray-800 dark:text-gray-200 text-center">{file.name}</p>
+          <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
+            <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm font-medium">
+              Document preview
+            </p>
+            <div className="space-y-2 my-4">
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-4/6"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/6"></div>
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              Document content would be displayed here
+            </p>
+          </div>
           <Button 
             className="flex items-center gap-2 mt-4" 
             onClick={handleDownload}
@@ -112,12 +135,22 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For spreadsheet files
     if (['xlsx', 'xls', 'csv'].includes(fileType)) {
       return (
-        <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <FileType type={fileType} size={48} className="mx-auto mb-4" />
-          <p className="font-medium text-gray-800 dark:text-gray-200">{file.name}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Spreadsheet preview would appear here in a production app.
-          </p>
+        <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
+          <FileType type={fileType} size={48} className="mb-4" />
+          <p className="font-medium text-gray-800 dark:text-gray-200 text-center">{file.name}</p>
+          <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
+            <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm font-medium">
+              Spreadsheet preview
+            </p>
+            <div className="grid grid-cols-4 gap-1 my-4">
+              {Array.from({ length: 16 }).map((_, i) => (
+                <div key={i} className="h-6 bg-gray-300 dark:bg-gray-600 rounded"></div>
+              ))}
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              Spreadsheet content would be displayed here
+            </p>
+          </div>
           <Button 
             className="flex items-center gap-2 mt-4" 
             onClick={handleDownload}
@@ -132,12 +165,25 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For presentation files
     if (['ppt', 'pptx'].includes(fileType)) {
       return (
-        <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <FileType type={fileType} size={48} className="mx-auto mb-4" />
-          <p className="font-medium text-gray-800 dark:text-gray-200">{file.name}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Presentation preview would appear here in a production app.
-          </p>
+        <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
+          <FileType type={fileType} size={48} className="mb-4" />
+          <p className="font-medium text-gray-800 dark:text-gray-200 text-center">{file.name}</p>
+          <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
+            <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm font-medium">
+              Presentation preview
+            </p>
+            <div className="h-40 border border-gray-300 dark:border-gray-600 rounded flex items-center justify-center my-4 bg-white/20 dark:bg-black/20">
+              <div className="h-20 w-32 bg-gray-300 dark:bg-gray-600 rounded"></div>
+            </div>
+            <div className="flex justify-center gap-1 my-4">
+              <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
+              <div className="h-2 w-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+              <div className="h-2 w-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              Presentation slides would be displayed here
+            </p>
+          </div>
           <Button 
             className="flex items-center gap-2 mt-4" 
             onClick={handleDownload}
@@ -152,12 +198,12 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     // For other file types
     return (
       <div className="text-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
-        <FileType type={fileType} size={48} className="mx-auto mb-4" />
-        <p className="font-medium text-gray-800 dark:text-gray-200">{file.name}</p>
+        <FileType type={fileType} size={64} className="mx-auto mb-4" />
+        <p className="font-medium text-gray-800 dark:text-gray-200 text-lg">{file.name}</p>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
           File type: {fileType.toUpperCase()}
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
           Uploaded on: {file.uploadDate}
         </p>
         <Button 
