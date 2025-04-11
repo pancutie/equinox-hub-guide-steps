@@ -13,6 +13,13 @@ import ViewControls from "@/components/projects/ViewControls";
 import UploadDialog from "@/components/projects/UploadDialog";
 import { Document, ProjectFiles } from "@/types/project";
 
+// Define allowed file types for each category
+const ALLOWED_FILE_TYPES = {
+  documents: ["pdf", "docx", "doc", "txt", "rtf"],
+  photos: ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"],
+  other: ["pptx", "ppt", "xlsx", "xls", "csv", "zip", "rar", "mp3", "mp4", "mov", "avi"]
+};
+
 // Enhanced mock data for documents
 const mockDocuments: ProjectFiles = {
   "documents": [
@@ -67,12 +74,29 @@ const YearDetailsPage = () => {
     setDocuments(mockDocuments[value] || []);
   };
 
+  const validateFileType = (filename: string, activeTab: string): boolean => {
+    const extension = filename.split('.').pop()?.toLowerCase() || '';
+    return ALLOWED_FILE_TYPES[activeTab as keyof typeof ALLOWED_FILE_TYPES]?.includes(extension) || false;
+  };
+
   const handleUpload = (name: string, file: File) => {
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+    
+    // Validate file type for the current tab
+    if (!validateFileType(file.name, activeTab)) {
+      toast({
+        title: "Invalid file type",
+        description: `Only ${ALLOWED_FILE_TYPES[activeTab as keyof typeof ALLOWED_FILE_TYPES].join(', ')} files are allowed in this section.`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // In a real app, you would upload the file to a server
     const newDoc: Document = {
       id: `doc${Math.random().toString(36).substring(2, 9)}`,
       name: name,
-      type: file.name.split('.').pop() || "unknown",
+      type: fileExtension,
       uploadDate: new Date().toISOString().split('T')[0]
     };
 
@@ -130,7 +154,7 @@ const YearDetailsPage = () => {
           </h1>
         </div>
 
-        <Card className="border border-purple-100 dark:border-purple-800 dark:bg-gray-800">
+        <Card className="border border-purple-100 dark:border-purple-800 dark:bg-gray-800/50">
           <CardContent className="p-6">
             <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
               <h2 className="text-xl font-semibold text-purple-700 dark:text-purple-300">Project Resources</h2>
@@ -141,6 +165,8 @@ const YearDetailsPage = () => {
                   isOpen={isUploadDialogOpen} 
                   onOpenChange={setIsUploadDialogOpen}
                   onUpload={handleUpload}
+                  activeTabLabel={activeTab === "documents" ? "Documents" : activeTab === "photos" ? "Photos" : "Other Files"}
+                  allowedFileTypes={ALLOWED_FILE_TYPES[activeTab as keyof typeof ALLOWED_FILE_TYPES]}
                 />
               </div>
             </div>

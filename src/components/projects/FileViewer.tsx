@@ -5,6 +5,7 @@ import { FileType } from "@/components/projects/FileType";
 import { X, Download, ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTheme } from "@/hooks/use-theme";
+import { useToast } from "@/hooks/use-toast";
 
 interface FileViewerProps {
   isOpen: boolean;
@@ -19,8 +20,25 @@ interface FileViewerProps {
 
 const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
   const { theme } = useTheme();
+  const { toast } = useToast();
   
   if (!file) return null;
+
+  const handleDownload = () => {
+    // In a real app, this would trigger an actual download
+    toast({
+      title: "Download started",
+      description: `Downloading ${file.name}...`,
+    });
+    
+    // Simulate a download success after a moment
+    setTimeout(() => {
+      toast({
+        title: "Download complete",
+        description: `${file.name} has been downloaded successfully`,
+      });
+    }, 1500);
+  };
 
   const renderFileContent = () => {
     const fileType = file.type.toLowerCase();
@@ -30,12 +48,23 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
       // In a real app, this would be the actual file URL
       const mockImageUrl = `https://picsum.photos/800/600?random=${file.id}`;
       return (
-        <div className="flex justify-center">
-          <img 
-            src={mockImageUrl} 
-            alt={file.name} 
-            className="max-w-full max-h-[70vh] object-contain rounded-md shadow-lg"
-          />
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-center">
+            <img 
+              src={mockImageUrl} 
+              alt={file.name} 
+              className="max-w-full max-h-[70vh] object-contain rounded-md shadow-lg"
+            />
+          </div>
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleDownload} 
+              className="flex items-center gap-2"
+            >
+              <Download size={16} />
+              Download Image
+            </Button>
+          </div>
         </div>
       );
     }
@@ -49,16 +78,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             This is where a PDF viewer would be embedded in a production app.
           </p>
-          <div className="flex justify-center gap-3 mt-4">
-            <Button className="flex items-center gap-2" variant="outline">
-              <Download size={16} />
-              Download PDF
-            </Button>
-            <Button className="flex items-center gap-2">
-              <ExternalLink size={16} />
-              Open in New Tab
-            </Button>
-          </div>
+          <Button 
+            className="flex items-center gap-2 mt-4" 
+            onClick={handleDownload}
+          >
+            <Download size={16} />
+            Download PDF
+          </Button>
         </div>
       );
     }
@@ -72,16 +98,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Document preview would appear here in a production app.
           </p>
-          <div className="flex justify-center gap-3 mt-4">
-            <Button className="flex items-center gap-2" variant="outline">
-              <Download size={16} />
-              Download Document
-            </Button>
-            <Button className="flex items-center gap-2">
-              <ExternalLink size={16} />
-              Open in New Tab
-            </Button>
-          </div>
+          <Button 
+            className="flex items-center gap-2 mt-4" 
+            onClick={handleDownload}
+          >
+            <Download size={16} />
+            Download Document
+          </Button>
         </div>
       );
     }
@@ -95,16 +118,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Spreadsheet preview would appear here in a production app.
           </p>
-          <div className="flex justify-center gap-3 mt-4">
-            <Button className="flex items-center gap-2" variant="outline">
-              <Download size={16} />
-              Download Spreadsheet
-            </Button>
-            <Button className="flex items-center gap-2">
-              <ExternalLink size={16} />
-              Open in New Tab
-            </Button>
-          </div>
+          <Button 
+            className="flex items-center gap-2 mt-4" 
+            onClick={handleDownload}
+          >
+            <Download size={16} />
+            Download Spreadsheet
+          </Button>
         </div>
       );
     }
@@ -118,16 +138,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Presentation preview would appear here in a production app.
           </p>
-          <div className="flex justify-center gap-3 mt-4">
-            <Button className="flex items-center gap-2" variant="outline">
-              <Download size={16} />
-              Download Presentation
-            </Button>
-            <Button className="flex items-center gap-2">
-              <ExternalLink size={16} />
-              Open in New Tab
-            </Button>
-          </div>
+          <Button 
+            className="flex items-center gap-2 mt-4" 
+            onClick={handleDownload}
+          >
+            <Download size={16} />
+            Download Presentation
+          </Button>
         </div>
       );
     }
@@ -143,7 +160,10 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Uploaded on: {file.uploadDate}
         </p>
-        <Button className="mt-4 flex items-center gap-2">
+        <Button 
+          className="mt-4 flex items-center gap-2"
+          onClick={handleDownload}
+        >
           <Download size={16} />
           Download File
         </Button>

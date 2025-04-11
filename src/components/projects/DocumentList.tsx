@@ -62,12 +62,12 @@ const DocumentList: React.FC<DocumentListProps> = ({ documents, onViewFile, onDe
             <td className="px-6 py-4 whitespace-nowrap">
               <div className="flex items-center gap-2">
                 <FileType type={doc.type} size={20} />
-                <span 
+                <button 
                   className="font-medium text-gray-900 dark:text-white cursor-pointer hover:text-purple-600 dark:hover:text-purple-400"
                   onClick={() => onViewFile(doc)}
                 >
                   {doc.name}
-                </span>
+                </button>
               </div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{doc.type.toUpperCase()}</td>
