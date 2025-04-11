@@ -1,4 +1,3 @@
-
 import MainLayout from "@/components/layout/MainLayout";
 import { useState } from "react";
 import {
@@ -18,7 +17,6 @@ import AddBorrowingDialog from "@/components/borrowing/AddBorrowingDialog";
 import DeleteConfirmDialog from "@/components/shared/DeleteConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 
-// Transaction data structure
 export interface Transaction {
   id: number;
   transactionType: "Book" | "Equipment";
@@ -30,7 +28,6 @@ export interface Transaction {
   status: "Borrowed" | "Returned";
 }
 
-// Mock data - in a real app, this would come from a database
 const initialTransactions: Transaction[] = [
   {
     id: 1,
@@ -99,7 +96,6 @@ const BorrowingPage = () => {
       transaction.borrower.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Function to add a new transaction
   const handleAddTransaction = (transaction: Omit<Transaction, "id">) => {
     const newTransaction = {
       ...transaction,
@@ -112,7 +108,6 @@ const BorrowingPage = () => {
     });
   };
 
-  // Function to delete a transaction
   const handleDeleteTransaction = () => {
     if (selectedTransaction) {
       setTransactions(transactions.filter((item) => item.id !== selectedTransaction.id));
@@ -124,7 +119,6 @@ const BorrowingPage = () => {
     }
   };
 
-  // Function to mark a transaction as returned
   const handleReturnItem = (transaction: Transaction) => {
     const updatedTransactions = transactions.map((item) => {
       if (item.id === transaction.id) {
@@ -145,7 +139,7 @@ const BorrowingPage = () => {
 
   return (
     <MainLayout>
-      <Card className="mb-6 border shadow-sm bg-white">
+      <Card className="mb-6 border shadow-sm bg-white dark:bg-gray-900">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
             <div className="relative flex-1">
@@ -168,74 +162,72 @@ const BorrowingPage = () => {
 
           <div className="rounded-md border overflow-hidden shadow-sm">
             <Table>
-              <TableCaption>List of all borrowing transactions</TableCaption>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead className="w-[100px]">Item No.</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Borrower</TableHead>
-                  <TableHead>Borrow Date</TableHead>
-                  <TableHead>Return Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+              <TableCaption className="dark:text-gray-400">List of all borrowing transactions</TableCaption>
+              <TableHeader className="bg-gray-50 dark:bg-gray-800">
+                <TableRow className="dark:border-gray-700">
+                  <TableHead className="dark:text-gray-300">Item No.</TableHead>
+                  <TableHead className="dark:text-gray-300">Description</TableHead>
+                  <TableHead className="dark:text-gray-300">Type</TableHead>
+                  <TableHead className="dark:text-gray-300">Borrower</TableHead>
+                  <TableHead className="dark:text-gray-300">Borrow Date</TableHead>
+                  <TableHead className="dark:text-gray-300">Return Date</TableHead>
+                  <TableHead className="dark:text-gray-300">Status</TableHead>
+                  <TableHead className="text-right dark:text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="dark:bg-gray-900">
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{transaction.itemNo}</TableCell>
-                      <TableCell>{transaction.description}</TableCell>
+                    <TableRow key={transaction.id} className="dark:border-gray-700 dark:hover:bg-gray-800 hover:bg-gray-50">
+                      <TableCell className="font-medium dark:text-gray-300">{transaction.itemNo}</TableCell>
+                      <TableCell className="dark:text-gray-300">{transaction.description}</TableCell>
                       <TableCell>
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
                             transaction.transactionType === "Book"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-purple-100 text-purple-800"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                              : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
                           }`}
                         >
                           {transaction.transactionType}
                         </span>
                       </TableCell>
-                      <TableCell>{transaction.borrower}</TableCell>
-                      <TableCell>{transaction.borrowDate}</TableCell>
-                      <TableCell>{transaction.returnDate || "Not returned"}</TableCell>
+                      <TableCell className="dark:text-gray-300">{transaction.borrower}</TableCell>
+                      <TableCell className="dark:text-gray-300">{transaction.borrowDate}</TableCell>
+                      <TableCell className="dark:text-gray-300">{transaction.returnDate || "Not returned"}</TableCell>
                       <TableCell>
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
                             transaction.status === "Returned"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-amber-100 text-amber-800"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                           }`}
                         >
                           {transaction.status}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {transaction.status === "Borrowed" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
-                              onClick={() => handleReturnItem(transaction)}
-                            >
-                              <ArrowDown size={16} className="mr-1" />
-                              Return
-                            </Button>
-                          )}
+                        {transaction.status === "Borrowed" && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              setSelectedTransaction(transaction);
-                              setIsDeleteDialogOpen(true);
-                            }}
+                            className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+                            onClick={() => handleReturnItem(transaction)}
                           >
-                            <Trash2 size={16} />
+                            <ArrowDown size={16} className="mr-1" />
+                            Return
                           </Button>
-                        </div>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedTransaction(transaction);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
@@ -252,14 +244,12 @@ const BorrowingPage = () => {
         </CardContent>
       </Card>
 
-      {/* Add Borrowing Dialog */}
       <AddBorrowingDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onSave={handleAddTransaction}
       />
 
-      {/* Delete Confirm Dialog */}
       {selectedTransaction && (
         <DeleteConfirmDialog
           isOpen={isDeleteDialogOpen}
