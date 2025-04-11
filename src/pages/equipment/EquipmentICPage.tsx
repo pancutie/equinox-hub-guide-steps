@@ -104,17 +104,17 @@ const EquipmentICPage = () => {
           <ArrowLeft size={16} className="mr-1" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold text-purple-800">Equipment / ICS</h1>
+        <h1 className="text-2xl font-bold text-purple-800 dark:text-purple-300">Equipment / ICS</h1>
       </div>
       
-      <Card className="mb-6 border shadow-sm bg-white border-purple-100">
+      <Card className="mb-6 border shadow-sm bg-white dark:bg-gray-900 border-purple-100 dark:border-purple-800">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 dark:text-purple-500" size={18} />
               <Input 
                 placeholder="Search for equipment..." 
-                className="pl-10 border-purple-200 focus-visible:ring-purple-400"
+                className="pl-10 border-purple-200 dark:border-purple-700 focus-visible:ring-purple-400 dark:bg-gray-800 dark:text-gray-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -128,40 +128,40 @@ const EquipmentICPage = () => {
             </Button>
           </div>
           
-          <div className="rounded-md border border-purple-100 overflow-hidden shadow-sm">
+          <div className="rounded-md border border-purple-100 dark:border-purple-800 overflow-hidden shadow-sm">
             <Table>
-              <TableCaption>List of all ICS equipment in the inventory</TableCaption>
-              <TableHeader className="bg-purple-50">
-                <TableRow>
-                  <TableHead className="text-purple-700">Description</TableHead>
-                  <TableHead className="text-purple-700">Quantity</TableHead>
-                  <TableHead className="text-purple-700">Unit</TableHead>
-                  <TableHead className="text-purple-700">Total Amount</TableHead>
-                  <TableHead className="text-purple-700">Inventory Item No.</TableHead>
-                  <TableHead className="text-purple-700">Est. Useful Life</TableHead>
-                  <TableHead className="text-purple-700">RIS No.</TableHead>
-                  <TableHead className="text-purple-700">ICS No.</TableHead>
-                  <TableHead className="text-purple-700">Status</TableHead>
-                  <TableHead className="text-right text-purple-700">Actions</TableHead>
+              <TableCaption className="dark:text-gray-400">List of all ICS equipment in the inventory</TableCaption>
+              <TableHeader className="bg-purple-50 dark:bg-gray-800/50">
+                <TableRow className="dark:border-purple-800">
+                  <TableHead className="text-purple-700 dark:text-purple-300">Description</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Quantity</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Unit</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Total Amount</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Inventory Item No.</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Est. Useful Life</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">RIS No.</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">ICS No.</TableHead>
+                  <TableHead className="text-purple-700 dark:text-purple-300">Status</TableHead>
+                  <TableHead className="text-right text-purple-700 dark:text-purple-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="dark:bg-gray-900">
                 {filteredEquipment.length > 0 ? (
                   filteredEquipment.map((item) => (
-                    <TableRow key={item.id} className="hover:bg-purple-50/50">
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>{item.unit}</TableCell>
-                      <TableCell>₱{item.totalAmount.toLocaleString()}</TableCell>
-                      <TableCell>{item.inventoryItemNo}</TableCell>
-                      <TableCell>{item.estimatedUsefulLife}</TableCell>
-                      <TableCell>{item.risNo}</TableCell>
-                      <TableCell>{item.icsNo}</TableCell>
+                    <TableRow key={item.id} className="dark:border-purple-800 dark:hover:bg-gray-800/50">
+                      <TableCell className="dark:text-gray-200">{item.description}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.quantity}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.unit}</TableCell>
+                      <TableCell className="dark:text-gray-200">₱{item.totalAmount.toLocaleString()}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.inventoryItemNo}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.estimatedUsefulLife}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.risNo}</TableCell>
+                      <TableCell className="dark:text-gray-200">{item.icsNo}</TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs ${
                           item.status === "Available" 
-                            ? "bg-green-100 text-green-800"
-                            : "bg-amber-100 text-amber-800"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300"
+                            : "bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300"
                         }`}>
                           {item.status}
                         </span>
@@ -175,7 +175,7 @@ const EquipmentICPage = () => {
                               setSelectedEquipment(item);
                               setIsEditDialogOpen(true);
                             }}
-                            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+                            className="border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-gray-800 hover:text-purple-700 dark:text-gray-200"
                           >
                             <Edit size={16} />
                           </Button>
@@ -186,7 +186,7 @@ const EquipmentICPage = () => {
                               setSelectedEquipment(item);
                               setIsDeleteDialogOpen(true);
                             }}
-                            className="border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+                            className="border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-gray-800 hover:text-purple-700 dark:text-gray-200"
                           >
                             <Trash2 size={16} />
                           </Button>
@@ -196,7 +196,7 @@ const EquipmentICPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={10} className="text-center py-8 text-muted-foreground dark:text-gray-500">
                       No equipment found. Try adjusting your search or add a new equipment.
                     </TableCell>
                   </TableRow>
@@ -239,3 +239,4 @@ const EquipmentICPage = () => {
 };
 
 export default EquipmentICPage;
+
