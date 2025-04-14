@@ -25,6 +25,14 @@ import { Search, UserPlus, Edit, Trash2, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AddUserDialog from "@/components/users/AddUserDialog";
 import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { 
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -34,11 +42,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
 
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [usersList, setUsersList] = useState(borrowers);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const { toast } = useToast();
@@ -64,13 +74,25 @@ const UsersPage = () => {
   };
   
   const handleEdit = (user: any) => {
-    setEditingUser(user);
-    toast({
-      title: "Edit user",
-      description: `Editing ${user.name}'s information.`,
-    });
-    // In a real app, this would open an edit dialog
-    setEditingUser(null);
+    setEditingUser({...user});
+    setIsEditDialogOpen(true);
+  };
+  
+  const saveEditedUser = () => {
+    if (editingUser) {
+      const updatedUsers = usersList.map(user => 
+        user.id === editingUser.id ? editingUser : user
+      );
+      setUsersList(updatedUsers);
+      
+      toast({
+        title: "User updated",
+        description: `${editingUser.name}'s information has been updated.`,
+      });
+      
+      setIsEditDialogOpen(false);
+      setEditingUser(null);
+    }
   };
   
   const confirmDelete = (userId: number) => {
@@ -209,6 +231,61 @@ const UsersPage = () => {
         onClose={() => setIsAddDialogOpen(false)} 
         onSuccess={handleAddUser}
       />
+      
+      {/* Edit User Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => !open && setIsEditDialogOpen(false)}>
+        <DialogContent className="dark:bg-gray-800 dark:border-purple-800">
+          <DialogHeader>
+            <DialogTitle className="dark:text-white">Edit User</DialogTitle>
+            <DialogDescription className="dark:text-gray-300">
+              Update user information below.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingUser && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name" className="dark:text-gray-300">Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editingUser.name}
+                  onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-role" className="dark:text-gray-300">Role</Label>
+                <select
+                  id="edit-role"
+                  value={editingUser.role}
+                  onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                >
+                  <option value="Student">Student</option>
+                  <option value="Faculty">Faculty</option>
+                  <option value="Staff">Staff</option>
+                </select>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditDialogOpen(false)}
+              className="dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={saveEditedUser}
+              className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600"
+            >
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteUserId !== null} onOpenChange={(open) => !open && setDeleteUserId(null)}>

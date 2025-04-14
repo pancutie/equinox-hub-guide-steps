@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FileType } from "@/components/projects/FileType";
@@ -71,33 +70,28 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
     
     // For PDF files
     if (fileType === 'pdf') {
+      // Display an embedded PDF viewer for PDFs
+      // In a real app, this would be the actual PDF URL
+      const mockPdfUrl = `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`;
+      
       return (
-        <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
-          <FileType type={fileType} size={48} className="mb-4" />
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-lg">PDF Preview: {file.name}</p>
-          <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
-            <div className="h-[60vh] max-h-[500px] flex flex-col items-center justify-center border border-gray-300 dark:border-gray-600 rounded my-4 bg-white/20 dark:bg-black/20">
-              <FileType type={fileType} size={64} className="opacity-40 mb-4" />
-              <p className="text-gray-700 dark:text-gray-300 text-sm px-8">
-                Document preview: {file.name}
-              </p>
-              <div className="h-[60%] w-[80%] border border-gray-300 dark:border-gray-600 rounded my-6 p-4 bg-white/30 dark:bg-black/30 flex items-center justify-center">
-                <p className="text-gray-500 dark:text-gray-400">
-                  PDF content would be displayed here
-                </p>
-              </div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs">
-                Full PDF viewer would be embedded here in a production app
-              </p>
-            </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-center">
+            <iframe
+              src={mockPdfUrl}
+              title={file.name}
+              className="w-full h-[70vh] border rounded-md shadow-lg"
+            />
           </div>
-          <Button 
-            className="flex items-center gap-2 mt-6 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600" 
-            onClick={handleDownload}
-          >
-            <Download size={16} />
-            Download PDF
-          </Button>
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={handleDownload} 
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600"
+            >
+              <Download size={16} />
+              Download PDF
+            </Button>
+          </div>
         </div>
       );
     }
@@ -107,7 +101,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
       return (
         <div className="p-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center">
           <FileType type={fileType} size={48} className="mb-4" />
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-center text-lg">{file.name}</p>
+          <p className="font-medium text-gray-800 dark:text-gray-200 text-lg">{file.name}</p>
           <div className="mt-6 bg-gray-200/40 dark:bg-gray-700/40 rounded-lg w-full max-w-2xl p-4 text-center">
             <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm font-medium">
               Document preview
@@ -160,7 +154,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ isOpen, onClose, file }) => {
         </div>
       );
     }
-
+    
     // For presentation files
     if (['ppt', 'pptx'].includes(fileType)) {
       return (
